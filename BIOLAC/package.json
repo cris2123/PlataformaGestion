@@ -1,0 +1,17 @@
+{
+  "name": "unu_biolac",
+  "version": "1.0.0",
+  "description": "Proyecto de Biolac para crear una plataforma de evaluacion",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Cristhian Bravo & Alexander Oyarzabal",
+  "license": "ISC",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "browser-sync": "^2.14.3",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2"
+  }
+}

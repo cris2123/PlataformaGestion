@@ -1,0 +1,26 @@
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <form action="{{url_for('default')}}", method="POST">
+
+    {{form.previousInvestigationScore}}
+    <button style="margin-left:20px" class="btn btn-lg btn-primary" type="submit" name="subscribe"> <i class="fa fa-upload"></i><span> Submit</span></button>
+    </form>
+
+
+</body>
+</html>

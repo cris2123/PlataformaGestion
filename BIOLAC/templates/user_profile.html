@@ -1,0 +1,443 @@
+{%extends "index.html" %}
+
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+
+    {% endfor %}
+{%- endmacro %}
+
+{%block head%}
+  <!-- <link rel="stylesheet" href="../static/dist/css/profile.css"> -->
+  <link rel="stylesheet" href="url_for('static',filename='dist/css/profile.css')">
+  <style>
+
+    #avatar {
+      /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+      /* Aqui pon el url de la imagen que subio el usuario */
+      background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+      /* make a square container */
+      width: 230px;
+      height: 230px;
+
+      /* fill the container, preserving aspect ratio, and cropping to fit */
+      background-size: cover;
+
+      /* center the image vertically and horizontally */
+      background-position: center;
+
+      /* round the edges to a circle with border radius 1/2 container size */
+      border-radius: 50%;
+  }
+  @media screen and (max-width: 1276px) {
+      a span{
+        display: none
+      }
+      #avatar{
+        width: 230px;
+        height: 230px;
+      }
+      #evalFellow span{
+        display: inline;
+      }
+      #evalCourses span{
+        display: inline;
+      }
+      #asignFellow span{
+        display: inline;
+      }
+      #asignCourses span{
+        display: inline;
+      }
+  }
+  @media screen and (max-width: 1104px) {
+      a span{
+        display: none
+      }
+      #avatar{
+        width: 230px;
+        height: 230px;
+      }
+      #evalFellow span{
+        display: inline;
+      }
+      #evalCourses span{
+        display: inline;
+      }
+      #asignFellow span{
+        display: inline;
+      }
+      #asignCourses span{
+        display: inline;
+      }
+  }
+  @media screen and (max-width: 970px) {
+      a span{
+        display: none
+      }
+      #avatar{
+        width: 160px;
+        height: 160px;
+        margin-bottom: 40px;
+      }
+  }
+  @media screen and (max-width: 768px) {
+    #avatar{
+      width: 180px;
+      height: 180px;
+      margin-bottom: 40px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+      a span{
+        display: none
+      }
+      #evalFellow span,i{
+        font-size: 0.7em;
+      }
+      #evalCourses span,i{
+        font-size: 0.7em;
+      }
+      #asignFellow span,i{
+        font-size: 0.7em;
+      }
+      #asignCourses span,i{
+        font-size: 0.7em;
+      }
+  }
+  @media screen and (max-width: 425px) {
+    #avatar{
+      width: 150px;
+      height: 150px;
+      margin-bottom: 30px;
+    }
+  }
+  #thumbnail {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url('{{avatar_url}}');
+
+    /* make a square container */
+    width: 35px;
+    height: 35px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+  }
+</style>
+  {{ JSGlue.include() }}
+{% endblock %}
+
+{%block menu%}
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  <!--Evaluator User-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Asignments/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Asignments/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Evaluations/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Evaluations/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  {% if user_level == 3 %}
+    <!--Admin User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
+        </li>
+        <li>
+          <a href="/Users"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li>
+              <a href="/Users">All</a>
+            </li>
+            <li>
+              <a href="/Evaluators">Evaluators</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> Aplications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="#"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+          {% if user_level == 3%}
+          <h1 class="page-header">Profile Information</h1>
+          {% else %}
+          <h1 class="page-header">My Profile</h1>
+          {% endif %}
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{user.name}} {{user.lastName}}</h3>
+            </div>
+            <div  style="padding:30px" class="panel-body">
+              <div class="row">
+                <div class="col-md-6 col-lg-6 " align="center">
+                  <div id="avatar">
+                  </div>
+                </div>
+                  <div class=" col-md-6 col-lg-6 ">
+                    <table class="table table-user-information">
+                      <legend>Profile Information</legend>
+                      <tbody>
+                        <tr>
+                          <td>Date of Birth:</td>
+                          <td>{{user.dateBirth}}</td>
+                        </tr>
+                        <tr>
+                          <td>Citizenship:</td>
+                          <td>{{user.citizenship}}</td>
+                        </tr>
+                        <tr>
+                          <td>Marital Status</td>
+                          <td>{{user.maritalStatus}}</td>
+                        </tr>
+                        <tr>
+                          <td>Gender</td>
+                          <td>{{user.gender}}</td>
+                        </tr>
+                        {% if user_level == 3 or user_level == 2 %}
+                        <tr>
+                          <td>Role</td>
+                          <td>{{user.role}}</td>
+                        </tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+              </div>
+                <br>
+
+            </div>
+
+          </div>
+          </div>
+    </div>
+  </div>
+{%endblock%}
+
+{% block table_script %}
+  <script>
+  var modalVerticalCenterClass = ".modal";
+  function centerModals($element) {
+      var $modals;
+      if ($element.length) {
+          $modals = $element;
+      } else {
+          $modals = $(modalVerticalCenterClass + ':visible');
+      }
+      $modals.each( function(i) {
+          var $clone = $(this).clone().css('display', 'block').appendTo('body');
+          var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+          top = top > 0 ? top : 0;
+          $clone.remove();
+          $(this).find('.modal-content').css("margin-top", top);
+      });
+  }
+  $(modalVerticalCenterClass).on('show.bs.modal', function(e) {
+      centerModals($(this));
+  });
+  $(window).on('resize', centerModals);
+
+  $('#deleteButton').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+  $('#deleteAlert').show();
+    setTimeout(function() {
+       $this.button('reset');
+         $('#deleteModal').modal('toggle');
+         window.location = "/dashboard";
+   }, 3000);
+  });
+
+ // Esto es importante para alexander pero no me funciona para el envio del ajax
+  // $('#roleButton').on('click', function() {
+  //   var $this = $(this);
+  // $this.button('loading');
+  // var data= $("#role_form").serialize();
+  // $.post('change_role/'+{{user.token}},data, function(receive){
+  //     $("#info").append(receive);
+  // });
+  // $('#roleAlert').show();
+  //   setTimeout(function() {
+  //      $this.button('reset');
+  //        $('#roleModal').modal('toggle');
+  //        window.location = "/Profile/Info/"+{{user.token}};
+  //  }, 5000);
+  // });
+ $("#roleButton").click( function(e){
+
+    //  var token={{user.token}};
+
+     var uri="{{url_for('change_role',token=user.token)}}" //+ token.toString();
+     //alert(uri);
+     var data= $("#role_form").serializeArray();
+     $.post(uri, data, function(receive){
+         $("#info").append(receive);
+         // de darle feedback al usuario
+         $('#roleAlert').show();
+     });
+
+
+     //$("#hidden_form").css("display","none");
+     // //return false;
+
+ });
+ $("#deleteButton").click( function(e){
+
+    //  var token={{user.token}};
+
+    var uri="{{url_for('delete',token=user.token)}}" //+ token.toString();
+    //alert(uri);
+    $.post(uri, function(receive){
+     $("#info").append(receive);
+     // de darle feedback al usuario
+    });
+
+     //$("#hidden_form").css("display","none");
+     // //return false;
+
+ });
+
+
+//   $(function() {
+//     $('#roleButton').click(function() {
+//         var data1 = $('#txtrole').val();
+//         var data2= $('#txtrole').val();
+//         var data3= $('#txtrole').val();
+//         $.ajax({
+//             url:{{url_for('change_role',token=user.token)}},
+//             data: $('form').serialize(),
+//             type: 'POST',
+//             success: function(response) {
+//                 console.log(response);
+//             },
+//             error: function(error) {
+//                 console.log(error);
+//             }
+//         });
+//     });
+// });
+
+
+
+  </script>
+{% endblock %}

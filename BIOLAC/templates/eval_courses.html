@@ -1,0 +1,181 @@
+{%extends "index.html" %}
+{%block head%}
+  <!-- DataTables CSS -->
+  <link href="../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+
+  <style media="screen">
+  #thumbnail {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+    /* make a square container */
+    width: 35px;
+    height: 35px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+  }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('apply_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('apply_fellow')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('courses_application')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('fellow_application')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('asign_courses')}}">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="{{url_for('asign_fellow')}}">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('eval_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('evaluated_fellow_test')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+  <div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">Evaluated Courses</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <!-- /.row -->
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="panel panel-default">
+              <div class="panel-heading">
+                  Courses
+              </div>
+              <!-- /.panel-heading -->
+              <div class="panel-body">
+                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                      <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Last Name</th>
+                            <th>Title</th>
+                            <th>Institution</th>
+                            <th>Date</th>
+                            <th>Score</th>
+                            <th>More</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for eval_course in eval_courses_list %}
+                          <tr class="odd gradeX">
+                            <td>{{eval_course.name}}</td>
+                            <td>{{eval_course.lastName}}</td>
+                            <td>{{eval_course.title}}</td>
+                            <td>{{eval_course.institution}}</td>
+                            <td>{{eval_course.date}}</td>
+                            <td class="center">{{eval_course.score}}</td>
+                            <td><a href="{{eval_course.more}}">Review</a></td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+                  </table>
+                  <br>
+                  <div class="row">
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                      <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>Empty table?</strong> You haven't made any course evaluation yet.
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+                      <a style="float:right; padding:15px"class="btn btn-primary"type="button" name="button" href="/Evaluations/Courses">Refresh</a>
+                    </div>
+
+                  </div>
+
+                  <!-- /.table-responsive -->
+              </div>
+              <!-- /.panel-body -->
+          </div>
+          <!-- /.panel -->
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <!-- /.row -->
+</div>
+{%endblock%}
+
+{% block table_script %}
+  <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script>
+  $(document).ready(function() {
+      $('#dataTables-example').DataTable({
+          responsive: true
+      });
+  });
+  $(document).ready(function() {
+      $('#dataTables-example2').DataTable({
+          responsive: true
+      });
+  });
+  </script>
+{% endblock %}

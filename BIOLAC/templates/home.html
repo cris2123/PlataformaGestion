@@ -1,0 +1,250 @@
+{%extends "index.html" %}
+
+{%block head%}
+  <!-- DataTables CSS -->
+  <link href="../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+
+  <style media="screen">
+  #thumbnail {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url( "{{url_for('static',filename = avatar_url)}}");
+
+    /* make a square container */
+    width: 35px;
+    height: 35px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+  }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  <!--Standard User-->
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="{{url_for('home')}}"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="{{url_for('apply_courses')}}">Courses</a>
+                </li>
+                <li>
+                    <a href="{{url_for('apply_fellow')}}">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="{{url_for('courses_application')}}">Courses</a>
+                </li>
+                <li>
+                    <a href="{{url_for('fellow_application')}}">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('apply_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('apply_fellow')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('courses_application')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('fellow_application')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('asign_courses')}}">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="{{url_for('asign_fellow')}}">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('eval_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('evaluated_fellow_test')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+{%endblock%}
+
+
+{%block wrapper%}
+  <!--Standard User-->
+  {% if user_level == 1 %}
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Welcome, {{name}}</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+          <div>
+              <p class="lead">Welcome to UNU-BIOLAC's applications virtual platform, here you will be able to manage your applications for any of our programs.</p>
+              <p class="lead" style="margin-bottom:0px">You can start using the platform by applying to fellow or courses programs. Try any of these two options by clicking on
+                the buttons below or in the "Apply" tab on the side menu</p>
+                  <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="text-align:left; margin-top: 20px">
+                          <h3>Courses</h3>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                          </p>
+                              <a style="font-size: 20px; width: 100%" type="button" class="btn btn-primary" href="{{url_for('apply_courses')}}">Courses</a>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="text-align:left; margin-top: 20px">
+                          <h3>Fellow</h3>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                          </p>
+                              <a style="font-size: 20px; width: 100%" type="button" class="btn btn-primary" href="{{url_for('apply_fellow')}}">Fellow</a>
+                        </div>
+                        <div class="col-lg-6 col-md-4 col-sm-4">
+
+                        </div>
+                  </div>
+          </div>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-8 col-md-12 col-sm-12" style="margin-top:30px">
+          <div class="alert alert-info" role="alert"> <span class="fa fa-user fa-fw" aria-hidden="true"></span>
+          Review and update your personal and contact information by clicking the user icon in the upper right corner</div>
+            <div class="alert alert-warning" role="alert"> <span class="fa fa-bell fa-fw" aria-hidden="true"></span>
+            Check your notifications on the icon in the upper right corner. There you can review the corresponding changes to the status of your application </div>
+        </div>
+    </div>
+    <!-- /.row -->
+
+  </div>
+  {% endif %}
+
+  <!--Evaluator User-->
+  {% if user_level == 2 %}
+  <div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">Welcome, {{name}}</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+          <div>
+              <p class="lead">Welcome to UNU-BIOLAC's Evaluation Dashboard. Here you will be able not only to manage your applications for any of our programs,
+              but as well to evaluate your asigned applications.</p>
+              <p class="lead" style="margin-bottom:0px">Start using the platform by applying to fellow or courses programs. Try any of these two options by clicking on
+                the buttons below or in the "Apply" tab on the side menu.</p><br>
+                <p class="lead" style="margin-bottom:0px"> Or start using the evaluation system by clicking in the "Asignments" tab in the sidebar menu. There you will find your pending evaluations.
+                  You can also check your already evaluated applications in "My Applications" tab.</p>
+                  <div class="row">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="text-align:left; margin-top: 20px">
+                          <h3>Courses</h3>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                          </p>
+                              <a style="font-size: 20px; width: 100%" type="button" class="btn btn-primary" href="{{url_for('apply_courses')}}">Courses</a>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="text-align:left; margin-top: 20px">
+                          <h3>Fellow</h3>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                          </p>
+                              <a style="font-size: 20px; width: 100%; vertical-align: bottom;" type="button" class="btn btn-primary" href="{{url_for('apply_fellow')}}">Fellow</a>
+                        </div>
+                        <div class="col-lg-3 col-md-4 col-sm-12 col-xs-12" style="text-align:left; margin-top: 20px">
+                          <h3>Evaluate</h3>
+                          <p>
+                            You can start evaluating the applications asigned to you by clicking in the button bellow or by clicking in the "Asingments" tab in the side bar.
+                            Remember that once you submit your evaluations, you wont be able to modify them, only review them.
+                          </p>
+                              <a style="font-size: 20px; width: 100%" type="button" class="btn btn-primary" href="Asignments/Fellow">Evaluate</a>
+                        </div>
+                  </div>
+          </div>
+        </div>
+        <!-- /.col-lg-12 -->
+        <div class="col-lg-8 col-md-12 col-sm-12" style="margin-top:30px">
+          <div class="alert alert-info" role="alert"> <span class="fa fa-user fa-fw" aria-hidden="true"></span>
+          Review and update your personal and contact information by clicking the user icon in the upper right corner</div>
+            <div class="alert alert-warning" role="alert"> <span class="fa fa-bell fa-fw" aria-hidden="true"></span>
+            Check your notifications on the icon in the upper right corner. There you can review the corresponding changes to the status of your application </div>
+        </div>
+    </div>
+    <!-- /.row -->
+
+  </div>
+  {% endif %}
+
+{%endblock%}

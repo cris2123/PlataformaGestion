@@ -1,0 +1,509 @@
+{%extends "index.html" %}
+
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{e}}</div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+{%block head%}
+  <link rel="stylesheet" href="../static/dist/css/profile.css">
+  <!-- DataTables CSS -->
+  <link href="../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+  <style>
+      @media screen and (max-width: 970px) {
+        a span{
+          display: none
+        }
+        #innerlogo{
+          width:70%
+        }
+    }
+    legend{
+      font-size: 2em
+    }
+    h4{
+      color: #a54399
+    }
+    #thumbnail {
+      /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+      /* Aqui pon el url de la imagen que subio el usuario */
+      background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+      /* make a square container */
+      width: 35px;
+      height: 35px;
+
+      /* fill the container, preserving aspect ratio, and cropping to fit */
+      background-size: cover;
+
+      /* center the image vertically and horizontally */
+      background-position: center;
+
+      /* round the edges to a circle with border radius 1/2 container size */
+      border-radius: 50%;
+    }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{user.name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+
+
+    </ul>
+  {% endif %}
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Apply/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Apply/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Applications/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Applications/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Asignments/Courses">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="/Asignments/Fellow">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Evaluations/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Evaluations/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+<form id="course_eval_form" action="{{url_for('evaluate_form_course', id=course.id)}}" method="POST">
+  {{ form.csrf_token }}
+  <div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Course</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+      <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Training Proposal Application Information</h3>
+        </div>
+        <div class="panel-body" style="padding:30px">
+          <!--Course General Information-->
+          <div class="row">
+            <div class="col-lg-6">
+              <br>
+              <img id="innerlogo" src="{{url_for('static',filename='images/logo-alt2.png')}}" width="50%" style="margin: auto; display:block;" alt="" />
+              <br>
+              <h1 style="text-align:center">{{course.title}}</h1>
+              <h3 style="margin-top:35px">UNU/BIOLAC Priority Areas</h3>
+              <div class="checkbox">
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if course.priority == 1 %}
+                    checked
+                  {% endif %}
+                  > Emerging and neglected human, animal and plant diseases
+                </label><br>
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if course.priority == 2 %}
+                    checked
+                  {% endif %}
+                  >
+                  Environmental microbiology: Metagenomics as a bioprospection tool for bioremediation
+                </label>
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if course.priority == 3 %}
+                    checked
+                  {% endif %}
+                  >
+                  Renewable sources of energy (industrial biotechnology)
+                </label>
+              </div>
+                <br>
+            </div>
+            <div class="col-lg-6">
+              <table class="table table-striped">
+                <legend>General Information</legend>
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{{course.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Last Name</td>
+                    <td>{{course.lastName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Title of the Training Proposal</td>
+                    <td>{{course.title}}</td>
+                  </tr>
+                  <tr>
+                    <td>Host Name</td>
+                    <td>{{course.hostName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Host Address</td>
+                    <td>{{course.hostAddress}}</td>
+                  </tr>
+                  <tr>
+                    <td>Name of the Training Course Coordinator</td>
+                    <td>{{course.coordName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Title of the Training Course Coordinator</td>
+                    <td>{{course.coordTitle}}</td>
+                  </tr>
+                  <tr>
+                    <td>Institutional Affiliation of the Training Course Coordinator</td>
+                    <td>{{course.coordAffiliation}}</td>
+                  </tr>
+                  <tr>
+                    <td>Excpected Commencement Date</td>
+                    <td>{{course.comDate}}</td>
+                  </tr>
+                  <tr>
+                    <td>Excpected Termination Date</td>
+                    <td>{{course.termDate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <br>
+          <!--Course Detailed Information-->
+          <div class="row">
+            <legend>Detailed Information</legend>
+            <!--Objetivo-->
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Objectives of the Training</h4>
+                    </div>
+                    <div class="panel-body">
+                      <ol>
+                        {% for objective in course.objectives %}
+                        <li>
+                          {{objective.objective_item}}
+                        </li>
+                        {% endfor %}
+                      </ol>
+                      <p></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  {{render_field(form.objectiveComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+                </div>
+              </div>
+            </div>
+            <!--Descripcion-->
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Course Description</h4>
+                    </div>
+                    <div class="panel-body">
+                    <p>{{course.description}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  {{render_field(form.descriptionComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+              <!--Organization of Training-->
+              <div class="col-lg-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" style="color: #a54399">Organization of training</h4>
+                  </div>
+                  <div class="panel-body">
+                  <p>{{course.organizationTraining}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--Collaborators-->
+              <div class="col-lg-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" style="color: #a54399">Collaborators</h4>
+                  </div>
+                  <div class="panel-body">
+                    <div class="row">
+                    </div>
+                    <table width="100%" class="table table-default" id=tableColl>
+                      <thead>
+                        <tr>
+                          <th>Full Name</th>
+                          <th>Position</th>
+                          <th>Institution</th>
+                          <th>Phone</th>
+                          <th>Email</th>
+                          <th>Area of Expertise</th>
+                          <th>CV</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!--Aqui deberia existir un for que itere sobre los items-->
+                        {% for collaborator in course.collaborators %}
+                        <tr>
+                          <td>{{collaborator.coll_name}}</td>
+                          <td>{{collaborator.coll_position}}</td>
+                          <td>{{collaborator.coll_institution}}</td>
+                          <td>{{collaborator.coll_phone}}</td>
+                          <td>{{collaborator.coll_email}}</td>
+                          <td>{{collaborator.coll_area}}</td>
+                          <td><a href={{collaborator.coll_cv}}>CV</a></td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                {{render_field(form.collaboratorsComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+              </div>
+            </div>
+          <div class="row">
+            <!--Budget-->
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Estimated Budget</h4>
+                    </div>
+                    <div class="panel-body">
+                      <table class="table table-default">
+                        <thead>
+                          <tr>
+                            <th>Item</th>
+                            <th>Budget</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!--Aqui deberia existir un for que itere sobre los items-->
+                          {% for item in course.budget %}
+                          <tr>
+                            <td>{{item.budget_desc}}</td>
+                            <td>{{item.budget_value}}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  {{render_field(form.budgetComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...",autofocus="")}}
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <!--Expected Output-->
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Expected Output</h4>
+                    </div>
+                    <div class="panel-body">
+                    <p>{{course.output}}</p>
+                    </div>
+                  </div>
+                </div>
+                <!--Identification and Selection of Trainees-->
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4>Identifications and Selection of Trainees</h4>
+                    </div>
+                    <div class="panel-body">
+                    <p>{{course.trainees}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-12">
+                  {{render_field(form.traineesComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...",autofocus="")}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Final comment, score and referee-->
+          <div class="row">
+            <div class="col-lg-7">
+              <label style="margin-left:1px; color:grey">Final Comments</label>
+              {{render_field(form.finalComment, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...",autofocus="")}}
+            </div>
+            <div class="col-lg-5">
+              <span class="pull-right" style="">
+                <label style="margin-left:1px; color:grey">Overral Qualifications</label>
+                <br>
+
+                {% for subfield in form.overallQualification%}
+
+                <label style="color:grey;"> {{ subfield.label }} </label>
+                {{subfield}}
+
+                {% endfor %}
+                <br>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <div class="row">
+            <div class="col-lg-12">
+              <span class="pull-right">
+                <!--Aqui se envia o guarda la evaluacion-->
+                <button id="saveButton" style="margin-left:20px" class="btn btn-lg btn-warning" type="button" name="save"> <i class="fa fa-floppy-o"></i><span> Save</span></button>
+                <button style="margin-left:20px" class="btn btn-lg btn-primary" type="submit" name="subscribe"> <i class="fa fa-upload"></i><span> Submit</span></button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block table_script %}
+  <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script>
+  $(document).ready(function() {
+      $('#tableColl').DataTable({
+          responsive: true,
+          paging: false,
+          searching: false
+      });
+  });
+  </script>
+  <script type="text/javascript">
+    $("#saveButton").click( function(e){
+
+       //  var token={{user.token}};
+
+        var uri="{{url_for('save_course_eval',id=course.id)}}" //+ token.toString();
+        //alert(uri);
+        var data= $("#course_eval_form").serializeArray();
+        $.post(uri, data, function(receive){
+            $("#info").append(receive);
+        });
+
+        //$("#hidden_form").css("display","none");
+        // //return false;
+
+    });
+  </script>
+{% endblock %}

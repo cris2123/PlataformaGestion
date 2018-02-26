@@ -1,0 +1,485 @@
+{%extends "index.html" %}
+
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{e}}</div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+{%block head%}
+  <link rel="stylesheet" href="../static/dist/css/profile.css">
+  <!-- DataTables CSS -->
+  <link href="../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+
+    <style>
+        @media screen and (max-width: 970px) {
+          a span{
+            display: none
+          }
+          #innerlogo{
+            width:70%
+          }
+      }
+      legend{
+        font-size: 2em
+      }
+      h4{
+        color: #a54399
+      }
+      #thumbnail {
+        /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+        /* Aqui pon el url de la imagen que subio el usuario */
+        background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+        /* make a square container */
+        width: 35px;
+        height: 35px;
+
+        /* fill the container, preserving aspect ratio, and cropping to fit */
+        background-size: cover;
+
+        /* center the image vertically and horizontally */
+        background-position: center;
+
+        /* round the edges to a circle with border radius 1/2 container size */
+        border-radius: 50%;
+      }
+    </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{user.name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Apply/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Apply/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Applications/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Applications/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Asignments/Courses">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="/Asignments/Fellow">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Evaluations/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Evaluations/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+<form id="fellow_eval_form" class="" action="{{url_for('evaluate_form_fellow',token=fellow.token)}}" method="POST">
+{{ form.csrf_token }}
+<div class="container-fluid">
+
+  <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Fellow</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+      <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Working Plan for Fellow Candidate</h3>
+        </div>
+        <div class="panel-body" style="padding:30px">
+          <div class="row">
+            <div class="col-lg-6">
+              <br>
+              <img id="innerlogo" src="{{url_for('static',filename='images/logo-alt2.png')}}" width="50%" style="margin: auto; display:block;" alt="" />
+              <br>
+              <h1 style="text-align:center">{{fellow.title}}</h1>
+              <h3 style="margin-top:35px">UNU/BIOLAC Priority Areas</h3>
+              <div class="checkbox">
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if fellow.priority == 1 %}
+                    checked
+                  {% endif %}
+                  > Emerging and neglected human, animal and plant diseases
+                </label><br>
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if fellow.priority == 2 %}
+                    checked
+                  {% endif %}
+                  >
+                  Environmental microbiology: Metagenomics as a bioprospection tool for bioremediation
+                </label>
+                <label style="padding-bottom:10px">
+                  <input type="checkbox" disabled
+                  {% if fellow.priority == 3 %}
+                    checked
+                  {% endif %}
+                  >
+                  Renewable sources of energy (industrial biotechnology)
+                </label>
+              </div>
+              <br>
+            </div>
+            <div class="col-lg-6">
+              <table class="table table-striped">
+                <legend>General Information</legend>
+                <tbody>
+                  <tr>
+                    <td>Name</td>
+                    <td>{{fellow.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Last Name</td>
+                    <td>{{fellow.lastName}}</td>
+                  </tr>
+                  <tr>
+                    <td>Title of the Fellow Working Plan</td>
+                    <td>{{fellow.title}}</td>
+                  </tr>
+                  <tr>
+                    <td>Citizenship</td>
+                    <td>{{fellow.citizenship}}</td>
+                  </tr>
+                  <tr>
+                    <td>Destination</td>
+                    <td>{{fellow.destination}}</td>
+                  </tr>
+                  <tr>
+                    <td>Institution</td>
+                    <td>{{fellow.institution}}</td>
+                  </tr>
+                  <tr>
+                    <td>Mentor</td>
+                    <td>dummy_filename</td>
+                  </tr>
+                  <tr>
+                    <td>Mentor Mail</td>
+                    <td>dummy_filename</td>
+                  </tr>
+                  <tr>
+                    <td>Host Institution</td>
+                    <td>dummy_filename</td>
+                  </tr>
+                  <tr>
+                    <td>Comm. Date</td>
+                    <td>dummy_filename</td>
+                  </tr>
+                  <tr>
+                    <td>Term. Date</td>
+                    <td>dummy_filename</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <legend>Detailed Information</legend>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">General Objective</h4>
+                    </div>
+                    <div class="panel-body">
+                      <p>
+                        {{fellow.generalObjective}}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Specific Objectives</h4>
+                    </div>
+                    <div class="panel-body">
+                      <ol>
+                        {% for objective in fellow.objectives %}
+                        <li>
+                          {{objective.objective_item}}
+                        </li>
+                        {% endfor %}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Justification</h4>
+                    </div>
+                    <div class="panel-body">
+                    <p>
+                    {{fellow.justification}}
+                    </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Activities</h4>
+                    </div>
+                    <div class="panel-body">
+                      <ol>
+                        {% for activity in fellow.activities %}
+                        <li>
+                          {{activity.activity_item}}
+                        </li>
+                        {% endfor %}
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4>Methodology</h4>
+                    </div>
+                    <div class="panel-body">
+                      <p>
+                      {{fellow.methodology}}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h4 class="panel-title" style="color: #a54399">Working Plan</h4>
+                    </div>
+                    <div class="panel-body">
+                      <p>
+                      {{fellow.plan}}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Justification and Criteria</h4>
+                </div>
+                <div class="panel-body">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <legend>Evaluation</legend>
+            <div class="col-lg-6">
+              <label>Previous Investigation Experience</label><br>
+              <p>
+                According to the available information in the applicant's CV, review the
+                previous investigation on a scale from 1 to 5, being the latter the best choice.
+              </p>
+
+              {% for subfield in form.previousInvestigationScore%}
+              <label style="color:grey;"> {{ subfield.label }} </label>
+              {{subfield}}
+              {% endfor %}
+
+              <br>
+
+              {{render_field(form.previousInvestigation, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+
+            </div>
+            <div class="col-lg-6">
+              <label>Current Investigation Experience</label><br>
+              <p>
+                According to the available information in the applicant's CV and his/her working plan, review the
+                current investigation on a scale from 1 to 5, being the latter the best choice.
+              </p>
+
+               {% for subfield in form.currentInvestigationScore%}
+               <label style="color:grey;"> {{ subfield.label }} </label>
+               {{subfield}}
+               {% endfor %}
+
+
+              <br>
+              {{render_field(form.currentInvestigation, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <label>Purpose of the Application</label><br>
+              <p>
+                Do you justify the purpose of the Application of this applicant and his/her project? review your consideration
+                 on a scale from 1 to 5, being the latter the best choice.
+              </p>
+
+               {% for subfield in form.purposeApplicationScore%}
+               <label style="color:grey;"> {{ subfield.label }} </label>
+               {{subfield}}
+               {% endfor %}
+
+              <br>
+              {{render_field(form.purposeApplication, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+            </div>
+            <div class="col-lg-6">
+              <label>Other Training Courses</label><br>
+              <p>
+                According to the available information en the applicant's CV, review the importance
+                of training courses on a scale from 1 to 5, being the latter the best choice.
+              </p>
+
+                {% for subfield in form.otherTrainingCoursesScore %}
+                <label style="color:grey;"> {{ subfield.label }} </label>
+                {{subfield}}
+                {% endfor %}
+
+                <br>
+                {{render_field(form.otherTrainingCourses, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+            </div>
+            <div class="col-lg-6">
+              <label>Final Review</label><br>
+              <p>
+                Please justify briefly your evaluation score.
+              </p>
+
+
+               {% for subfield in form.finalReviewScore %}
+               <label style="color:grey;"> {{ subfield.label }} </label>
+               {{subfield}}
+               {% endfor %}
+
+
+              <br>
+              {{render_field(form.finalReview, type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="")}}
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer">
+          <div class="row">
+            <div class="col-lg-12">
+              <span class="pull-right">
+                <!--Aqui se envia o guarda la evaluacion-->
+                <button id="saveButton" style="margin-left:20px" class="btn btn-lg btn-warning" type="button" name="subscribe"> <i class="fa fa-floppy-o"></i><span> Save</span></button>
+                <button style="margin-left:20px" class="btn btn-lg btn-primary" type="submit" name="subscribe"> <i class="fa fa-upload"></i><span> Submit</span></button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block table_script %}
+
+  <script type="text/javascript">
+    $("#saveButton").click( function(e){
+       //  var token={{user.token}};
+        var uri="{{url_for('save_fellow_eval',token=fellow.token)}}"
+        //alert(uri);
+        var data= $("#fellow_eval_form").serializeArray();
+        $.post(uri, data, function(receive){
+            $("#info").append(receive);
+        });
+
+        //$("#hidden_form").css("display","none");
+        // //return false;
+
+    });
+  </script>
+{% endblock %}

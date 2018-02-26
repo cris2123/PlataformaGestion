@@ -1,0 +1,562 @@
+{%extends "index.html" %}
+
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{e}}</div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_upload_field(field) %}
+
+
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+{%block head%}
+  <link rel="stylesheet" href="../static/dist/css/profile.css">
+  <style>
+
+  #avatar {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+    /* make a square container */
+    width: 230px;
+    height: 230px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+}
+@media screen and (max-width: 1276px) {
+    a span{
+      display: none
+    }
+    #avatar{
+      width: 230px;
+      height: 230px;
+    }
+    #evalFellow span{
+      display: inline;
+    }
+    #evalCourses span{
+      display: inline;
+    }
+    #asignFellow span{
+      display: inline;
+    }
+    #asignCourses span{
+      display: inline;
+    }
+}
+@media screen and (max-width: 1104px) {
+    a span{
+      display: none
+    }
+    #avatar{
+      width: 230px;
+      height: 230px;
+    }
+    #evalFellow span{
+      display: inline;
+    }
+    #evalCourses span{
+      display: inline;
+    }
+    #asignFellow span{
+      display: inline;
+    }
+    #asignCourses span{
+      display: inline;
+    }
+}
+@media screen and (max-width: 970px) {
+    a span{
+      display: none
+    }
+    #avatar{
+      width: 160px;
+      height: 160px;
+      margin-bottom: 40px;
+    }
+}
+@media screen and (max-width: 768px) {
+  #avatar{
+    width: 180px;
+    height: 180px;
+    margin-bottom: 40px;
+  }
+}
+@media screen and (max-width: 500px) {
+    a span{
+      display: none
+    }
+    #evalFellow span,i{
+      font-size: 0.7em;
+    }
+    #evalCourses span,i{
+      font-size: 0.7em;
+    }
+    #asignFellow span,i{
+      font-size: 0.7em;
+    }
+    #asignCourses span,i{
+      font-size: 0.7em;
+    }
+}
+@media screen and (max-width: 425px) {
+  #avatar{
+    width: 150px;
+    height: 150px;
+    margin-bottom: 30px;
+  }
+}
+#thumbnail {
+  /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+  /* Aqui pon el url de la imagen que subio el usuario */
+  background-image: url('{{avatar_url}}');
+
+  /* make a square container */
+  width: 35px;
+  height: 35px;
+
+  /* fill the container, preserving aspect ratio, and cropping to fit */
+  background-size: cover;
+
+  /* center the image vertically and horizontally */
+  background-position: center;
+
+  /* round the edges to a circle with border radius 1/2 container size */
+  border-radius: 50%;
+}
+</style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  <!--Evaluator User-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Asignments/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Asignments/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Evaluations/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Evaluations/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  {% if user_level == 3 %}
+    <!--Admin User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
+        </li>
+        <li>
+          <a href="/Users"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li>
+              <a href="/Users">All</a>
+            </li>
+            <li>
+              <a href="/Evaluators">Evaluators</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> Aplications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="#"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+<form class="" action="" method="post">
+    <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-header">My Profile</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{user.name}} {{user.lastName}}</h3>
+            </div>
+            <div  style="padding:30px" class="panel-body">
+              <div class="row">
+                <div class="col-md-6 col-lg-6 " align="center">
+                  <div id="avatar">
+                  </div>
+                </div>
+                  <div class=" col-md-6 col-lg-6 ">
+                    <table class="table table-user-information">
+                      <legend>Profile Information</legend>
+                      <tbody>
+                        <tr>
+                          <td>Date of Birth:</td>
+                          <td>{{render_field(form.birth_date, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                        </tr>
+                        <tr>
+                          <td>Citizenship:</td>
+                          <td>{{render_field(form.citizenship, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                        </tr>
+                        <tr>
+                          <td>Marital Status</td>
+                          <td>{{render_field(form.marital_status, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                        </tr>
+                        <tr>
+                          <td>Gender</td>
+                          <td>{{render_radio_field(form.gender)}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <br>
+              <div class="row">
+                  <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                    <table class="table table-user-information">
+                      <legend>Contact Information</legend>
+                      <tr>
+                        <td>Country</td>
+                        <td>{{render_field(form.country, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+
+                      <tr>
+                        <td>City</td>
+                        <td>{{render_field(form.city, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>Home Address</td>
+                        <td>{{render_field(form.address, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>ZIP code: </td>
+                        <td>{{render_field(form.zip_code, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>Email</td>
+                        <td><a>{{render_field(form.email, style="width:100%; max-width:100%;", autofocus="")}}</a></td>
+                      </tr>
+                        <td>Phone Number</td>
+                        <td>{{render_field(form.phonenumber, style="width:100%; max-width:100%;", autofocus="")}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          Mobile Number
+                        </td>
+                        <td>{{render_field(form.cellphone, style="width:100%; max-width:100%;", autofocus="")}}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-md-6 col-lg-6 col-xs-12 col-sm-12">
+                    <table class="table table-user-information">
+                      <legend>Institution</legend>
+                      <tr>
+                        <td>Institution</td>
+                        <td>{{render_field(form.institution, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>Faculty</td>
+                        <td>{{render_field(form.faculty, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>Specific Section</td>
+                        <td>{{render_field(form.section, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                    </table>
+                    <table class="table table-user-information">
+                      <legend>Scientific Profile</legend>
+                      <tr>
+                        <td>Maximum completed academic level</td>
+                        <td>{{render_field(form.max_academic_level, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                      <tr>
+                        <td>Current Study Level</td>
+                        <td>{{render_field(form.current_academic_level, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                        <td>Workplace/Research Center</td>
+                        <td>{{render_field(form.work_place, style="width:100%; max-width:100%;", autofocus="")}}</td>
+                      </tr>
+                    </table>
+                  </div>
+
+                </div>
+            </div>
+            <div class="panel-footer">
+              <div class="row">
+                <div class="col-lg-12">
+                  <span class="pull-right">
+                    <button class="btn btn-lg btn-warning" type="submit" name="save"> <i class="glyphicon glyphicon-edit"></i> <span> Save  changes </span></button>
+                </div>
+              </div>
+            </div>
+            <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+              <form action="{{url_for('edit_user_profile')}}" method="post">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title">Delete Confirmation</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>This action will delete this user permanently from the Database. All data will be lost.</p>
+                      <div style="display: none;" id="deleteAlert" class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="submit" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>Success!</strong> User has been deleted. You will be redirected to the dashboard.
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button id="deleteButton" type="submit" value="delete" class="btn btn-danger">Delete</button>
+                    </div>
+                  </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </form>
+            </div><!-- /.modal -->
+            <div id="roleModal" class="modal fade" tabindex="-1" role="dialog">
+              <form action="#">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Change Role</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>Select the new role for this user.
+                       <br>
+                       <input type="radio" name="role" value="Standard"
+                       checked="checked" /> Standard
+                       <input style="margin-left:15px" type="radio" name="role" value="Evaluator" />
+                        Evaluator
+                       {% if user_level == 3 %}
+                       <input style="margin-left:15px" type="radio" name="role" value="Assistant" />
+                        Assistant
+                       {% endif %}
+                      </p>
+                    <div style="display: none;" id="roleAlert" class="alert alert-warning alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <strong>Success!</strong> An invitation to change role was sent to the user. Changes will apply when the user accepts.
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button id="roleButton" type="button" class="btn btn-warning">Change Role</button>
+                    </div>
+                </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </form>
+            </div><!-- /.modal -->
+            <div id="evalModal" class="modal fade" tabindex="-1" role="dialog">
+              <form action="#">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Evaluation and Asignments</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>Select the information you want to review. Evaluations (Green) - Asignments (Yellow)
+                      </p>
+                  </div>
+                  <div class="modal-footer">
+                    <a id="evalFellow" style="margin-left:10px;" href="/PruebaEval/Fellows" data-original-title="View Fellow" data-toggle="tooltip" type="button" class="btn btn-success"><i class="fa fa-check"></i>
+                     <span>Fellow</span></a>
+                    <a id="evalCourses" style="margin-left:10px" href="/PruebaEval/Courses" data-original-title="View Fellow" data-toggle="tooltip" type="button" class="btn btn-success"><i class="fa fa-check"></i>
+                      <span>Courses</span></a>
+                    <a id="asignFellow" style="margin-left:10px" href="/PruebaAsign/Fellows" data-original-title="View Fellow" data-toggle="tooltip" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o"></i>
+                      <span>Fellow</span></a>
+                    <a id="asignCourses" style="margin-left:10px" href="/PruebaAsign/Courses" data-original-title="View Fellow" data-toggle="tooltip" type="button" class="btn  btn-warning"><i class="fa fa-pencil-square-o"></i>
+                      <span>Courses</span></a>
+                  </div>
+                </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+              </form>
+            </div><!-- /.modal -->
+          </div>
+          </div>
+    </div>
+  </div>
+</form>
+{%endblock%}
+
+{% block table_script %}
+  <script>
+  var modalVerticalCenterClass = ".modal";
+  function centerModals($element) {
+      var $modals;
+      if ($element.length) {
+          $modals = $element;
+      } else {
+          $modals = $(modalVerticalCenterClass + ':visible');
+      }
+      $modals.each( function(i) {
+          var $clone = $(this).clone().css('display', 'block').appendTo('body');
+          var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+          top = top > 0 ? top : 0;
+          $clone.remove();
+          $(this).find('.modal-content').css("margin-top", top);
+      });
+  }
+  $(modalVerticalCenterClass).on('show.bs.modal', function(e) {
+      centerModals($(this));
+  });
+  $(window).on('resize', centerModals);
+
+  $('#deleteButton').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+  $('#deleteAlert').show();
+    setTimeout(function() {
+       $this.button('reset');
+         $('#deleteModal').modal('toggle');
+         window.location = "/dashboard";
+   }, 3000);
+  });
+
+  $('#roleButton').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+  $('#roleAlert').show();
+    setTimeout(function() {
+       $this.button('reset');
+         $('#roleModal').modal('toggle');
+         window.location = "/Profile";
+   }, 5000);
+  });
+  </script>
+{% endblock %}

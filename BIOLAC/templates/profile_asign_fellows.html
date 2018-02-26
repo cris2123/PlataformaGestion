@@ -1,0 +1,158 @@
+{%extends "index.html" %}
+{%block head%}
+  <!-- DataTables CSS -->
+  <link href="../../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+
+  <style media="screen">
+  #thumbnail {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+    /* make a square container */
+    width: 35px;
+    height: 35px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+  }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  <!--Admin User-->
+  {% if user_level == 3 %}
+    <!--Admin User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
+        </li>
+        <li>
+          <a href="/Users"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li>
+              <a href="/Users">All</a>
+            </li>
+            <li>
+              <a href="/Evaluators">Evaluators</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> Aplications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+  <div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">{{user.name}} {{user.lastName}}</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <!-- /.row -->
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="panel panel-warning">
+              <div class="panel-heading">
+                  Asigned Fellows
+              </div>
+              <!-- /.panel-heading -->
+              <div class="panel-body">
+                  <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                      <thead>
+                          <tr>
+                              <th>Name</th>
+                              <th>Last Name</th>
+                              <th>Citizenship</th>
+                              <th>Title</th>
+                              <th>Destination</th>
+                              <th>Institution</th>
+                              <th>More</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for asign_fellow in asign_fellow_list %}
+                          <tr class="odd gradeX">
+                            <td>{{asign_fellow.name}}</td>
+                            <td>{{asign_fellow.lastName}}</td>
+                            <td>{{asign_fellow.citizenship}}</td>
+                            <td>{{asign_fellow.title}}</td>
+                            <td>{{asign_fellow.destination}}</td>
+                            <td>{{asign_fellow.institution}}</td>
+                            <td><a href="{{asign_fellow.more}}">View Application</a></td>
+                          </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                  <br>
+                  <div class="row">
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                      <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong>Empty table?</strong> This user has no asigned fellow evaluations yet.
+                      </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3">
+                      <a style="float:right; padding:15px"class="btn btn-primary"type="button" name="button" href="/PruebaAsign/Fellows">Refresh</a>
+                    </div>
+
+                  </div>
+
+                  <!-- /.table-responsive -->
+              </div>
+              <!-- /.panel-body -->
+          </div>
+          <!-- /.panel -->
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <!-- /.row -->
+</div>
+{%endblock%}
+
+
+{% block table_script %}
+  <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script>
+  $(document).ready(function() {
+      $('#dataTables-example').DataTable({
+          responsive: true
+      });
+  });
+  $(document).ready(function() {
+      $('#dataTables-example2').DataTable({
+          responsive: true
+      });
+  });
+  </script>
+{% endblock %}

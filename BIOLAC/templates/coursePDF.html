@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Training Proposal</title>
+  </head>
+
+  <body>
+    <h2>Course Application Form</h2>
+    <hr>
+    <h1 style="text-align:center">{{course.title}}</h1>
+    <h3 style="margin-top:35px">UNU/BIOLAC Priority Areas</h3>
+    <label style="padding-bottom:10px">
+      <input type="checkbox"> Emerging and neglected human, animal and plant diseases
+    </label>
+    <br>
+    <label style="padding-bottom:10px">
+      <input type="checkbox">
+      Environmental microbiology: Metagenomics as a bioprospection tool for bioremediation
+    </label>
+    <br>
+    <label style="padding-bottom:10px">
+      <input type="checkbox">
+      Renewable sources of energy (industrial biotechnology)
+    </label>
+    <table class="table table-striped">
+      <legend>General Information</legend>
+      <tbody>
+        {% if user_level == 3 %}
+        <tr>
+          <td>Name</td>
+          <td>{{course.name}}</td>
+        </tr>
+        <tr>
+          <td>Last Name</td>
+          <td>{{course.lastName}}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td>Title of the Training Proposal</td>
+          <td>{{course.title}}</td>
+        </tr>
+        <tr>
+          <td>Host Name</td>
+          <td>{{course.hostName}}</td>
+        </tr>
+        <tr>
+          <td>Host Address</td>
+          <td>{{course.hostAddress}}</td>
+        </tr>
+        <tr>
+          <td>Name of the Training Course Coordinator</td>
+          <td>{{course.coordName}}</td>
+        </tr>
+        <tr>
+          <td>Title of the Training Course Coordinator</td>
+          <td>{{course.coordTitle}}</td>
+        </tr>
+        <tr>
+          <td>Institutional Affiliation of the Training Course Coordinator</td>
+          <td>{{course.coordAffiliation}}</td>
+        </tr>
+        <tr>
+          <td>Excpected Commencement Date</td>
+          <td>{{course.comDate}}</td>
+        </tr>
+        <tr>
+          <td>Excpected Termination Date</td>
+          <td>{{course.termDate}}</td>
+        </tr>
+        <tr>
+          <td>Destination</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <legend>Detailed Information</legend>
+    <h4 class="panel-title" style="color: #a54399">Objectives of the Training</h4>
+    <ol>
+      {% for objective in course.objectives %}
+      <li>
+        {{objective}}
+      </li>
+      {% endfor %}
+    </ol>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Course Description</h4>
+    <p>{{course.description}}</p>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Organization of training</h4>
+    <p>{{course.organizationTraining}}</p>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Collaborators</h4>
+    <table width="100%" class="table table-default" id=tableColl>
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Position</th>
+        <th>Institution</th>
+        <th>Phone</th>
+        <th>Fax</th>
+        <th>Email</th>
+        <th>Area of Expertise</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--Aqui deberia existir un for que itere sobre los items-->
+      {% for collaborator in course.collaborators %}
+      <tr>
+        <td>{{collaborator.fullName}}</td>
+        <td>{{collaborator.position}}</td>
+        <td>{{collaborator.institution}}</td>
+        <td>{{collaborator.phone}}</td>
+        <td>{{collaborator.fax}}</td>
+        <td>{{collaborator.email}}</td>
+        <td>{{collaborator.area}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Estimate Budget</h4>
+    <table class="table table-default">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Budget</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!--Aqui deberia existir un for que itere sobre los items-->
+    {% for item in course.budget %}
+    <tr>
+      <td>{{item.description}}</td>
+      <td>{{item.budget}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Expected Output</h4>
+    <p>{{course.output}}</p>
+    <br>
+    <h4 class="panel-title" style="color: #a54399">Identifications and Selection of Trainees</h4>
+    <p>{{course.trainees}}</p>
+    <br>
+    {% if user_level == 3 or user_level == 2%}
+      {% for evaluation in course.evaluations%}
+      <div style="margin-top:15px"class=" ">
+        <legend >Evaluation</legend>
+          <div class=" ">
+            <label>Objectives of the course</label><br>
+            <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+              {{evaluation.objectivesComment}}
+            </p>
+          </div>
+          <div class=" ">
+            <label>Course description</label><br>
+            <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+              {{evaluation.descriptionComment}}
+            </p>
+          </div>
+        </div>
+      <div class=" ">
+        <div class=" ">
+          <label>Collaborators</label><br>
+          <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+            {{evaluation.collaboratorsComment}}
+          </p>
+        </div>
+        <div class=" ">
+          <label>Identification and selection of trainees</label><br>
+          <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+            {{evaluation.traineesComment}}
+          </p>
+        </div>
+      </div>
+      <div class=" ">
+        <div class=" ">
+          <label>Estimated Budget</label><br>
+          <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+            {{evaluation.budgetComment}}
+          </p>
+        </div>
+        <div class=" ">
+          <label>Final Comments</label><br>
+          <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+            {{evaluation.finalComment}}
+          </p>
+        </div>
+        <div class=" ">
+          <br><br><br>
+          <div class="pull-right">
+            <p style="text text-warning">
+              Reviewed by : {{evaluation.name}} {{evaluation.lastName}}
+            </p>
+            <p style="text text-warning">
+              Overall Qualification : {{evaluation.overallQualification}}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+
+  </body>
+</html>

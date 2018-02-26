@@ -1,0 +1,95 @@
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_upload_field(field) %}
+
+
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to UNU-BIOLAC</title>
+    <!-- <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css'> -->
+    <link rel='stylesheet prefetch' href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+      <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+
+
+  <body >
+    <div class="section" style="background-color: white">
+      <a href="https://google.com"><img src="{{url_for('static',filename='images/logo-alt2.png')}}" width="200px" class="logo"/></a>
+            <div class="contact-box">
+            	<p style="text-align: right"><a href="">English</a></p>
+            	<p>+58 (212) 9621120</p>
+            </div>
+    </div>
+
+      <div class="wrapper">
+        <form class="form-signin" method="POST" action="{{url_for('login')}}" >
+          <h2 class="form-signin-heading">Login to UNU-BIOLAC</h2>
+          <h4 class="form-signin-sub">Have an account?</h4>
+
+          {# EStos es super importante porque es e ltoken de validacion de las formas #}
+           {{ form.csrf_token }}
+
+          {{render_field(form.email,placeholder="Email Address", type="text", required="required",autofocus="")}}
+          {{render_field(form.password,placeholder="Password ", type="password", required="required",autofocus="")}}
+
+          <label class="checkbox" style="margin-left:-2rem;">
+             {{render_field(form.remember_me, type="checkbox", class="", id="rememberMe",autofocus="", style="width:6rem; margin-left:10rem;")}}
+             {{form.remember_me.label}}
+             <a style="margin-left: 3.8rem;" href="{{url_for('forgot_password')}}">Forgot password?</a>
+          </label>
+
+
+
+          <br>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+
+          <hr>
+          <h4 class="form-signin-sub">New to UNU-BIOLAC?</h4>
+
+            <button id="myButton" class="btn btn-lg btn-primary btn-block" type="Button" style="background-color:grey; border-color:grey">Sign up</button>
+            <script type="text/javascript">
+                document.getElementById("myButton").onclick = function () {
+                    location.href = "/registro"
+                    //location.href = "signup.html";
+                };
+            </script>
+
+        </form>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>UNU-BIOLAC</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{{url_for('static',filename='bootstrap/dist/css/bootstrap.min.css')}}" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="{{url_for('static',filename='metisMenu/dist/metisMenu.min.css')}}" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{url_for('static',filename='dist/css/sb-admin-2.css')}}" rel="stylesheet">
+
+    <!-- Morris Charts CSS -->
+    <link href="{{url_for('static',filename='morrisjs/morris.css')}}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{{url_for('static',filename='font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style media="screen">
+      #biolac {
+        padding: 10px 10px 10px 10px;
+        display: block;
+        width: 100%;
+      }
+      @media screen and (max-width: 768px) {
+          #biolac{
+            display: none;
+          }
+      }
+    #page-wrapper{
+      overflow: auto;
+      background-color: white;
+      padding-top: 57px;
+    }
+    #navbar{
+      position: fixed;
+      width: 100%;
+    }
+    </style>
+
+    {%block head%}
+
+
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav  id="navbar" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+             <div style="width:100%; padding-left:10px;" class="navbar-header">
+                <button style="float:left" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <ul style="float:right; margin-right:-15px" class="nav navbar-top-links navbar-right">
+                  <li style="margin:0px">
+                    <a href="/Profile" style="min-height: 0px; padding:13px 9px 9px 9px">
+                      {% block avatar %}
+
+                      {% endblock %}
+
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" style="min-height: 57px; font-size:18px">
+                      <i class="fa fa-bell" aria-hidden="true"></i>
+                      <span style="background-color: #337ab7;" class="badge">4</span>
+                    </a>
+
+                  </li>
+
+                    <!-- /.dropdown -->
+                </ul>
+                <!-- /.navbar-top-links -->
+            </div>
+
+                        <!-- /.navbar-header -->
+            <div  class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                  <img id="biolac" src="{{url_for('static',filename='images/logo-alt2.png')}}" width="100%" style="padding:10px 10px 10px 10px" alt="" />
+
+
+                  {%block menu%}
+                  <!--Menu dinamico segun nivel de usuario-->
+                  {%endblock%}
+
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+          <!--Contenido de la pagina Wrapper-->
+          {%block wrapper%}
+          {%endblock%}
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <!-- <script src="../static/jquery/dist/jquery.min.js"></script> -->
+    <script src="{{url_for('static',filename='jquery/dist/jquery.min.js')}}"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <!-- <script src="../static/bootstrap/dist/js/bootstrap.min.js"></script> -->
+    <script src="{{url_for('static',filename='bootstrap/dist/js/bootstrap.min.js')}}"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <!-- <script src="../static/metisMenu/dist/metisMenu.min.js"></script> -->
+    <script src="{{url_for('static',filename='metisMenu/dist/metisMenu.min.js')}}"></script>
+
+    <!-- DataTables JavaScript -->
+    <!-- <script src="../static/datatables/media/js/jquery.dataTables.min.js"></script> -->
+    <script src="{{url_for('static',filename='datatables/media/js/jquery.dataTables.min.js')}}"></script>
+
+    <!-- <script src="../static/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script> -->
+    <script src="{{url_for('static',filename='datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js')}}"></script>
+    <!-- <script src="../static/datatables-responsive/js/dataTables.responsive.js"></script> -->
+    <script src="{{url_for('static',filename='datatables-responsive/js/dataTables.responsive.js')}}"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <!-- <script src="../static/raphael/raphael.min.js"></script> -->
+    <script src="{{url_for('static',filename='raphael/raphael.min.js')}}"></script>
+    <!-- <script src="../static/morrisjs/morris.min.js"></script> -->
+    <script src="{{url_for('static',filename='morrisjs/morris.min.js')}}"></script>
+    <!-- <script src="../static/data/morris-data.js"></script> -->
+    <script src="{{url_for('static',filename='data/morris-data.js')}}"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <!-- <script src="../static/dist/js/sb-admin-2.js"></script> -->
+    <script src="{{url_for('static',filename='dist/js/sb-admin-2.js')}}"></script>
+
+    {% block table_script %}
+
+    {% endblock %}
+
+</body>
+
+</html>

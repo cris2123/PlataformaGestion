@@ -1,0 +1,315 @@
+{%extends "index.html" %}
+
+{%block head%}
+  <style media="screen">
+  #thumbnail {
+    /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+    /* Aqui pon el url de la imagen que subio el usuario */
+    background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+    /* make a square container */
+    width: 35px;
+    height: 35px;
+
+    /* fill the container, preserving aspect ratio, and cropping to fit */
+    background-size: cover;
+
+    /* center the image vertically and horizontally */
+    background-position: center;
+
+    /* round the edges to a circle with border radius 1/2 container size */
+    border-radius: 50%;
+  }
+  </style>
+{% endblock %}
+
+{%block menu%}
+  {% if user_level == 3 %}
+    <!--Admin User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="{{url_for('dashboard')}}"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
+        </li>
+        <li>
+          <a href="/Users"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li>
+                <a href="{{url_for('user')}}">All</a>
+            </li>
+            <li>
+              <a href="/Evaluators">Evaluators</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> Aplications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="{{url_for('courses_application')}}">Courses</a>
+                </li>
+                <li>
+                    <a href="{{url_for('fellow_application')}}">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+{%endblock%}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{name}}</strong>
+{% endblock %}
+
+{% block wrapper %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+          <h1 class="page-header">Dashboard</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-users fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{data.users}}</div>
+                            <div>Users!</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{url_for('user')}}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-green">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-graduation-cap fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{data.courses}}</div>
+                            <div>Courses!</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{url_for('courses_application')}}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-yellow">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-globe fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{data.fellows}}</div>
+                            <div>Fellows!</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="{{url_for('fellow_application')}}">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="panel panel-red">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-pencil fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">{{data.total_e}}</div>
+                            <div>Evaluations!</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">View Details</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="col-lg-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Area Chart Example
+                <div class="pull-right">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Actions
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="#">Action</a>
+                            </li>
+                            <li><a href="#">Another action</a>
+                            </li>
+                            <li><a href="#">Something else here</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div id="morris-area-chart"></div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-9 -->
+  <div class="col-lg-3">
+    <div class="panel panel-default">
+      <div class="panel panel-heading">
+        <i class="fa fa-database fa-fw"></i> Database Management
+      </div>
+      <div class="panel panel-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <p>
+              Last Backup date: MM/DD/YY
+            </p>
+            <div style="display: none;" id="successAlert" class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> Your database has been backed up. <a class="alert-link" href="#">Download Here</a>
+            </div>
+            <button id="backupButton" style="font-size: 20px; width: 100%; vertical-align: bottom;"
+            data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Backing Up" class="btn btn-success btn-lg">Backup Database</button>
+            <hr>
+            <p>
+              Last delete date: MM/DD/YY
+            </p>
+            <div style="display: none;" id="deleteAlert" class="alert alert-danger alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> Your database has been deleted.
+            </div>
+            <button style="font-size: 20px; width: 100%; vertical-align: bottom;" data-toggle="modal" data-target="#deleteModal"
+            class="btn btn-danger btn-lg">Delete Database</button>
+
+            <div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>This action will delete all aplications and evaluations made for this application process. All data will be lost.</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="deleteButton" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Deleting" type="button" class="btn btn-danger">Delete</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  </div>
+{%endblock%}
+
+{% block table_script %}
+<script>
+    var modalVerticalCenterClass = ".modal";
+    function centerModals($element) {
+        var $modals;
+        if ($element.length) {
+            $modals = $element;
+        } else {
+            $modals = $(modalVerticalCenterClass + ':visible');
+        }
+        $modals.each( function(i) {
+            var $clone = $(this).clone().css('display', 'block').appendTo('body');
+            var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+            top = top > 0 ? top : 0;
+            $clone.remove();
+            $(this).find('.modal-content').css("margin-top", top);
+        });
+    }
+    $(modalVerticalCenterClass).on('show.bs.modal', function(e) {
+        centerModals($(this));
+    });
+    $(window).on('resize', centerModals);
+
+    $('#backupButton').on('click', function() {
+      var $this = $(this);
+    $this.button('loading');
+      setTimeout(function() {
+         $this.button('reset');
+           $('#successAlert').show();
+     }, 3000);
+    });
+
+
+    $('#deleteButton').on('click', function() {
+
+
+    var $this = $(this);
+    var uri="{{url_for('delete_all')}}"
+    $this.button('loading');
+    $.get(uri,function(receive){
+        $('#deleteAlert').show();
+        $("#deleteAlert").append(receive);
+        $('#deleteModal').modal('toggle');
+        // de darle feedback al usuario
+        // $('#roleAlert').show();
+    });
+
+    // $this.button('loading');
+    //   setTimeout(function() {
+    //      $this.button('reset');
+    //        $('#deleteAlert').show();
+    //        $('#deleteModal').modal('toggle');
+    //  }, 3000);
+    });
+</script>
+{% endblock %}

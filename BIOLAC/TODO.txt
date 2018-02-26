@@ -1,0 +1,46 @@
+Ocurrio un errorname 'bcrypt' is not defined  en Apply/Fellow al postular planilla con archivos adjuntos PDF
+
+Arreglar time out en el pool de workers en mysql (Arreglado temporalmente falta probar)
+
+Arreglar la carga de los pdf y de las imagenes de foto de perfil
+
+
+127.0.0.1 - - [04/Nov/2016 17:37:25] "POST /Asignments/Evaluate/Course/2 HTTP/1.1" 302 -
+/home/cris1/.virtualenvs/flask_p3/lib/python3.5/site-packages/sqlalchemy/sql/default_comparator.py:153: SAWarning: The IN-predicate on "curso.id" was invoked with an empty sequence. This results in a contradiction, which nonetheless can be expensive to evaluate.  Consider alternative strategies for improved performance.
+  'strategies for improved performance.' % expr)
+
+ /home/cris1/.virtualenvs/flask_p3/lib/python3.5/site-packages/pymysql/cursors.py:167: Warning: (1366, "Incorrect integer value: '' for column 'evaluators_asignedCount' at row 1")
+
+
+TODO:
+
+En /Applications/Courses debes pasarme las asignaciones pendientes para los badges que van en el menu porque no
+estoy recibiendo esas variables en el html, no las he puesto, lineas 108 y 110.
+
+//En Application/Fellow/Info no se marca el checkbox de la priority area que fue seleccionada en la postulacion.
+Solucion: No te estaba pasando el parametro priority, ahora si te lo paso. Debes hacer la logica en jinja
+para marcar el checkbox correcto.
+
+En Application/Courses/Info falta el campo destination, tambien hay un error con las areas de prioridad que se estan marcando, supongo que esa logica no esta implementada todavia.
+Solucion: La logica para marcar las areas no esta implementada en el front end pero ya te estoy mandando el field priority
+se habia acordado que iba a ser un valor entre 1,2,3 y se haria la logica con esos valores
+
+
+En /Applications/Fellow vista desde Admin, faltan los campos en blanco de la tabla. Country se refiere a destination, no a citizenship.
+Solucion: Los campos en blanco no se piden en el formulario hay que cambiar el front end del formulario para agregar los campos
+ademas de eso aprovechar y agregar el score que pidieron en la ultima reunion.
+
+En /Asignments/Fellow se necesitan los campos de la tabla.
+Solucion : Este campo se debe agregar cuando se cambie el formulario
+
+En /Asignments/Courses faltan los campos en la tabla, y aparece 'description' que es el campo Course Description en el formulario de postulacion. Si es muy largo, trunca
+el string cuando llegue a 20 caracteres o algo asi y le pones tres puntos suspensivos al final.
+Solucion: La tabla corta el campo asi que no es necesario hacer logica extra para eso.
+
+
+en /Asign/Evaluator/ no se ve el avatar arriba en el menu.
+
+/Applications/Fellow/Info/ tiene las areas de prioridad no bloqueadas, hay que bloquearlas.
+
+
+Arreglar el endpoint de profile.

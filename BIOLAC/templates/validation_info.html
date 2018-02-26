@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="fa-events-icons-ready">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/font-awesome.min.css')}}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style media="screen">
+      body{
+        font-size: 10px;
+      }
+      h3{
+        font-size: 12px;
+        text-align:justify;
+      }
+      #title{
+        font-size: 26px;
+      }
+      #logo{
+        width:50%;
+        margin: 1%;
+      }
+      #mail{
+        text-align: center;
+        color: #418ac9;
+      }
+      @media screen and (min-width: 410px) {
+        #logo{
+          width:40%;
+        }
+        body{
+          font-size: 14px;
+        }
+        h3{
+          font-size: 15px;
+          text-align:justify;
+        }
+        #title{
+          font-size: 34px;
+        }
+      }
+      @media screen and (min-width: 768px) {
+        #logo{
+          width:25%;
+
+        }
+        body{
+          font-size: 20px;
+        }
+        h3{
+          font-size: 17px;
+          text-align:justify;
+        }
+        #title{
+          font-size: 54px;
+        }
+      }
+      @media screen and (min-width: 1024px) {
+        #logo{
+          width:25%;
+        }
+        body{
+          font-size: 26px;
+        }
+        h3{
+          font-size: 22px;
+          text-align:justify;
+        }
+        #title{
+          font-size: 68px;
+        }
+        #Return{
+          font-size: 22px;
+        }
+      }
+      @media screen and (min-width: 1600px) {
+        #logo{
+          width:15%;
+        }
+        body{
+          font-size: 30px;
+        }
+        h3{
+          margin-top: 40px;
+          font-size: 26px;
+          text-align:justify;
+        }
+        #title{
+          font-size: 78px;
+        }
+        #Return{
+          font-size: 26px;
+        }
+
+      }
+    </style>
+</head>
+
+  <body style="background: white;">
+    <div class="section" style="background-color: #f5f5f5;padding-bottom: 10px;padding-top: 10px;padding-left: 5px;">
+      <a href="index.html"><img src="{{url_for('static', filename='images/logo-alt2.png')}}" id="logo"></a>
+
+    </div>
+    <div class="container" style="background: white;padding-top: 30px;">
+      <div class="container-fluid">
+        <div style="text-align: center" class="row">
+          <i id="mail" class="fa fa-envelope fa-5x" aria-hidden="true"></i>
+          </div>
+        {% if data.flag_reenviado == False %}
+        <div class="row">
+          <div style="margin-top:20px" class="container">
+            <div style="text-align:center;border: none;margin-bottom: 30px;">
+                <strong id="title">Just One More Step!</strong>
+                <hr>
+                <div class="alert alert-info" role="alert">
+                  <!-- <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> -->
+                  <span class="sr-only"></span>
+                  In order to login to our platform you must validate your email.
+                </div>
+                <h3>
+                  </h3>
+                <h3>
+                  You've just been sent an email to confirm your email address.
+                  Please click on the link in this email to confirm your registration.
+                  </h3>
+                  <h3>
+                    You didn't recieve the email? <a href="{{url_for('resend', id=data.id)}}" >Click here</a>
+                    to re-send it.
+                </h3>
+                <br>
+                <a id="Return" class="btn btn-primary" href="#">Return to Login Page</a>
+
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p>Fue enviado otro correo de validacion.</p>
+        {% endif %}
+      </div>
+    </div>
+  <script src="https://use.fontawesome.com/c2a7c9107b.js"></script>
+  </body>
+
+ </html>

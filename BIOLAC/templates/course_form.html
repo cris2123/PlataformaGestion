@@ -1,0 +1,545 @@
+{%extends "index.html" %}
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+        <div style="display:inline">
+          <input type="radio" style="display:inline" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}"><label style="display:inline">{{ label }}</label><br>
+        </div>
+    {% endfor %}
+{%- endmacro %}
+{%block head%}
+  <link rel="stylesheet" href="../static/dist/css/profile.css">
+  <!-- DataTables CSS -->
+  <link href="../static\datatables-plugins\integration\bootstrap\3\dataTables.bootstrap.css" rel="stylesheet">
+
+  <!-- DataTables Responsive CSS -->
+  <link href="../static\datatables-responsive\css\dataTables.responsive.css" rel="stylesheet">
+  <style>
+      @media screen and (max-width: 970px) {
+        a span{
+          display: none
+        }
+        #innerlogo{
+          width:70%
+        }
+      }
+    legend{
+      font-size: 2em
+    }
+    h4{
+      color: #a54399
+    }
+    #objTable td {
+      border-top: none !important;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    #objTable th {
+      border-top: none !important;
+      padding: 8px 0px 0px 0px;
+    }
+    #budgetTable td {
+      border-top: none !important;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    #budgetTable th {
+      border-top: none !important;
+      padding: 8px 5px 0px 5px;
+    }
+    #thumbnail {
+      /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+      /* Aqui pon el url de la imagen que subio el usuario */
+      background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+      /* make a square container */
+      width: 35px;
+      height: 35px;
+
+      /* fill the container, preserving aspect ratio, and cropping to fit */
+      background-size: cover;
+
+      /* center the image vertically and horizontally */
+      background-position: center;
+
+      /* round the edges to a circle with border radius 1/2 container size */
+      border-radius: 50%;
+    }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{user.name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  <!--Standard User-->
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="{{url_for('home')}}"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="{{url_for('apply_courses')}}">Courses</a>
+                </li>
+                <li>
+                    <a href="{{url_for('apply_fellow')}}">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="{{url_for('courses_application')}}">Courses</a>
+                </li>
+                <li>
+                    <a href="{{url_for('fellow_application')}}">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('apply_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('apply_fellow')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('courses_application')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('fellow_application')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('asign_courses')}}">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="{{url_for('asign_fellow')}}">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="{{url_for('eval_courses')}}">Courses</a>
+              </li>
+              <li>
+                  <a href="{{url_for('evaluated_fellow_test')}}">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+{%endblock%}
+
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{e}}</div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{%block wrapper%}
+  <form id="course_form" action="{{url_for('apply_courses')}}" method="POST" enctype="multipart/form-data">
+  <div class="container-fluid">
+    <!--Aqui empieza el form-->
+       {{ form.csrf_token }}
+        <div class="row">
+            <div class="col-lg-12">
+              <h1 class="page-header">Course Application Form</h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                  <h3 class="panel-title">Training Proposal Application Information</h3>
+              </div>
+              <div class="panel-body" style="padding:30px">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <br>
+                    <img id="innerlogo" src="{{url_for('static',filename='images/logo-alt2.png')}}" width="50%" style="margin: auto; display:block;" alt="" />
+                    <br>
+                    <h3>Title of the Proposal:</h3>
+                    {{render_field(form.courseTitle, style="width:100%; max-width:100%;", class="alert alert-info", placeholder="Title of the Training Proposal", autofocus="")}}
+                    <h3 style="margin-top:15px">UNU/BIOLAC Priority Areas</h3>
+                        <div class="checkbox">
+                         {{render_radio_field(form.priority)}}
+                        </div>
+                      <br>
+                  </div>
+                  <div class="col-lg-6">
+                    <legend>General Information</legend>
+                    <p>
+                      Please fill all the following fields:
+                    </p>
+                    <div class="row">
+                      <div class="col-lg-6">
+                          <div class="form-group">
+                            <label for="hostName">Host Institution Name</label>
+                            {{render_field(form.hostName, class="form-control", placeholder="Host Institution Name", autofocus="", id="hostName")}}
+                          </div>
+                          <div class="form-group">
+                            <label for="hostAddress">Host Institution Address</label>
+                            {{render_field(form.hostAddress, class="form-control", placeholder="Host Institution Address", autofocus="", id="hostAddress")}}
+                          </div>
+                          <div class="form-group">
+                            <label for="coordName">Name of the Training Course Coordinator</label>
+                            {{render_field(form.coordName, class="form-control", placeholder="Name of the Training Course Coordinator", autofocus="", id="coordName")}}
+                          </div>
+                          <div class="form-group">
+                            <label for="coordTitle">Title of the Training Course Coordinator</label>
+                            {{render_field(form.coordTitle, class="form-control", placeholder="Title of the Training Course Coordinator", autofocus="", id="coordTitle")}}
+                          </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="form-group">
+                          <label for="coordAffiliation">Institutional Affiliation of the Training Course Coordinator</label>
+                          {{render_field(form.coordAffiliation, class="form-control", placeholder="Institutional Affiliation of the Training Course Coordinator", autofocus="", id="coordAffiliation")}}
+                        </div>
+                        <div class="form-group">
+                          <label for="commDate">Expected Commencement Date</label>
+                          {{render_field(form.commDate, type="date", class="form-control", placeholder="YY-MM-DD", autofocus="", id="commDate")}}
+                        </div>
+                        <div class="form-group">
+                          <label for="termDate">Expected Termination Date</label>
+                          {{render_field(form.termDate, type="date", class="form-control", placeholder="YY-MM-DD", autofocus="", id="termDate")}}
+                        </div>
+                        <div class="form-group">
+                          <label for="Destination">Host Country</label>
+                          {{render_field(form.destination, class="form-control", placeholder="Host Country", autofocus="", id="Destination")}}
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <legend>Detailed Information</legend>
+                  <div class="col-lg-6">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" style="color: #a54399">Objectives of the Training</h4>
+                      </div>
+                      <div class="panel-body">
+                        <div data-toggle="fieldset" id="objective-fieldset">
+                          <button class="btn btn-success"type="button" data-toggle="fieldset-add-row"
+                          id="button-add-objective-row" data-target="#objective-fieldset">Add</button>
+                            <table id="objTable" style="margin: 0px; width:100%" class="table">
+                                <tr>
+                                    <th>Objective Description</th>
+                                    <th></th>
+                                </tr>
+                                {% for objective in form.courseObjectives %}
+                                    <tr data-toggle="fieldset-entry">
+                                        <td>{{ objective.objective_item(class_="form-control", placeholder="Enter your objective...") }}</td>
+                                        <td style="width: 30px ">
+                                          <button style="margin-left:10px"class="btn btn-danger" type="button"
+                                          data-toggle="fieldset-remove-row"
+                                          id="objective-{{loop.index0}}-remove">
+                                          <i class="fa fa-times"></i>
+                                        </button></td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" style="color: #a54399">Course Description</h4>
+                      </div>
+                      <div style="padding:0px" class="panel-body">
+                        {{render_field(form.courseDescription, type="TextArea", style="border-radius: 0px; max-width:100%", class="form-control", placeholder="Course Description", autofocus="")}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" style="color: #a54399">Organization of training</h4>
+                      </div>
+                      <div style="padding:0px" class="panel-body">
+                        {{render_field(form.organizationTrainingDescription, type="TextArea", style="border-radius: 0px; max-width:100%", class="form-control", placeholder="Organization of training", autofocus="")}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" style="color: #a54399">Collaborators</h4>
+                      </div>
+                      <div class="panel-body">
+                        <div data-toggle="fieldset" class="row" id="collaborator-fieldset">
+
+                            <button style="margin: 0px 0px 15px 15px"class="btn btn-success"type="button" data-toggle="fieldset-add-row"
+                            id="button-add-collaborator-row" data-target="#collaborator-fieldset">Add Collaborator</button>
+
+                          <div data-toggle="fieldset-entry" class="col-lg-12">
+                            <div class="row">
+                              {% for collaborator in form.courseCollaborators %}
+                                <div class="col-lg-4 col-md-4">
+                                  Name
+                                  {{collaborator.coll_name(class_="form-control")}}
+                                  Phone
+                                  {{collaborator.coll_phone(class_="form-control")}}
+                                  Area of Expertise
+                                  {{collaborator.coll_area(class_="form-control")}}
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                  Position
+                                  {{collaborator.coll_position(class_="form-control")}}
+
+                                  CV
+                                  {{collaborator.coll_CV}}
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                  Institution
+                                  {{collaborator.coll_institution(class_="form-control")}}
+                                  Email
+                                  {{collaborator.coll_email(class_="form-control")}}
+                                    <button style="margin:10px 0px 0px 0px"class="btn btn-danger" type="button"
+                                    data-toggle="fieldset-remove-row"
+                                    id="collaborator-{{loop.index0}}-remove">
+                                    <i class="fa fa-times"></i> Remove
+                                  </button>
+                                </div>
+                              {% endfor %}
+                            </div>
+                            <hr>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h4 class="panel-title" style="color: #a54399">Estimated Budget</h4>
+                      </div>
+                      <div class="panel-body">
+                        <div data-toggle="fieldset" class="row" id="budget-fieldset">
+
+                            <button style="margin: 0px 0px 15px 15px"class="btn btn-success"type="button" data-toggle="fieldset-add-row"
+                            id="button-add-budget-row" data-target="#budget-fieldset">Add Item</button>
+
+                          <div data-toggle="fieldset-entry" class="col-lg-12">
+                            <div class="row">
+                              {% for budgetItem in form.courseBudgetItems %}
+                                <div class="col-lg-8 col-md-8 col-md-12">
+                                  Item
+                                  {{budgetItem.budget_desc(class_="form-control")}}
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-md-12">
+                                  USD
+                                  {{budgetItem.budget_value(class_="form-control", onkeyup="calculate()")}}
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-md-12">
+                                    <button style="margin:20px 0px 0px 0px"class="btn btn-danger" type="button"
+                                    data-toggle="fieldset-remove-row"
+                                    id="budget-{{loop.index0}}-remove">
+                                    <i class="fa fa-times"></i>
+                                  </button>
+                                </div>
+                              {% endfor %}
+                            </div>
+                            <br>
+                          </div>
+                          <div class="">
+                            <div class="col-lg-8 col-md-8 col-md-12">
+                              <strong>Total Expenditures</strong>
+                            </div>
+                            <div class="col-lg-2 col-md-8 col-md-12" style="text-align:center">
+                              <input id="total" class="form-control" disabled></input>
+                            </div>
+                            <div class="col-lg-2 col-md-8 col-md-12">
+
+                            </div>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-lg-8 col-md-8 col-md-12">
+                            Source of Funding: UNU-BIOLAC
+                            {{render_field(form.fundingSource, class="form-control", placeholder="Source of Funding", autofocus="", id="fundingSource")}}
+                          </div>
+                          <div class="col-lg-4 col-md-2 col-md-12">
+                            USD
+                            {{render_field(form.fundingSourceScore, class="form-control", placeholder="", autofocus="", id="fundingSource")}}
+                          </div>
+
+                        </div>
+                        <div class="row" style="padding-top:10px">
+                          <div class="col-lg-8 col-md-8 col-md-12">
+                            Counterpart funds Host Institution
+                            {{render_field(form.counterpartFund, class="form-control", placeholder="Counterpart funds Host Institution", autofocus="", id="counterpartFund")}}
+                          </div>
+                          <div class="col-lg-4 col-md-2 col-md-12">
+                            USD
+                            {{render_field(form.counterpartFundScore, class="form-control", placeholder="", autofocus="", id="counterpartFund")}}
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h4 class="panel-title" style="color: #a54399">Expected Output</h4>
+                          </div>
+                          <div style="padding:0px" class="panel-body">
+                            {{render_field(form.expectedOutput, type="TextArea", style="border-radius: 0px; max-width:100%", class="form-control", placeholder="Expected Output", autofocus="")}}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-12">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h4 class="panel-title" style="color: #a54399">Identifications and Selection of Trainees</h4>
+                          </div>
+                          <div style="padding:0px" class="panel-body">
+                            {{render_field(form.courseTrainees, type="TextArea", style="border-radius: 0px; max-width:100%", class="form-control", placeholder="Identifications and Selection of Trainees", autofocus="")}}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="alert alert-danger">
+                      <p>
+                        <strong>Important Notice:</strong> UNU-BIOLAC will priviledge budget funds mostly oriented to the students' mobilization,
+                        and exhorts course coordinators not to charge registration fares.
+                      </p>
+                      <p>
+                        *UNU-BIOLAC will fund courses up to 15000 USD and will not consider proposals with no counterpart funds.
+                      </p>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="panel-footer">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <span class="pull-right">
+                      <!--Aqui se envia la aplicaion-->
+                     <button id="saveButton" style="margin-left:20px" class="btn btn-lg btn-warning" type="button" name="save"> <i class="fa fa-floppy-o"></i><span> Save</span></button>
+                      <!--Aqui se envia la aplicacion-->
+                      <button style="margin-left:20px" class="btn btn-lg btn-primary" type="submit" name="subscribe"> <i class="fa fa-upload"></i><span> Submit</span></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+  </form>
+{% endblock %}
+
+{% block table_script %}
+  <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script src="{{ url_for("static", filename="js/page.js") }}"></script>
+  <script>
+  $(document).ready(function() {
+      $('#tableColl').DataTable({
+          responsive: true,
+          paging: false,
+          searching: false,
+          "ordering": false
+      });
+  });
+  </script>
+  <script type="text/javascript">
+    $("#saveButton").click( function(e){
+
+       //  var token={{user.token}};
+
+
+        var uri="{{url_for('save_course',token=user.token)}}" //+ token.toString();
+        //alert(uri);
+        var data= $("#course_form").serializeArray();
+        $.post(uri, data, function(receive){
+            $("#info").append(receive);
+        });
+
+        //$("#hidden_form").css("display","none");
+        // //return false;
+
+    });
+  </script>
+  <script type="text/javascript">
+    function calculate(){
+      //var elems = document.getElementsByName('courseBudgetItems-0-budget_value');
+      var sum = 0;
+      var $eles = $(":input[name*='budget_value']")
+      for (var i = 0; i < $eles.length; i++)
+      {
+        sum += parseInt($eles[i].value);
+      }
+      document.getElementById('total').value = sum;
+    }
+  </script>
+{% endblock %}

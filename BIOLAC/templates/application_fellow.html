@@ -1,0 +1,645 @@
+{%extends "index.html" %}
+
+{%block head%}
+  <link rel="stylesheet" href="../static/dist/css/profile.css">
+  <style>
+      @media screen and (max-width: 970px) {
+        a span{
+          display: none
+        }
+        #innerlogo{
+          width:70%
+        }
+    }
+    legend{
+      font-size: 2em
+    }
+    h4{
+      color: #a54399
+
+    }
+    #thumbnail {
+      /* This image is 687 wide by 1024 tall, similar to your aspect ratio */
+      /* Aqui pon el url de la imagen que subio el usuario */
+      background-image: url("{{ url_for('static',filename = avatar_url) }}");
+
+      /* make a square container */
+      width: 35px;
+      height: 35px;
+
+      /* fill the container, preserving aspect ratio, and cropping to fit */
+      background-size: cover;
+
+      /* center the image vertically and horizontally */
+      background-position: center;
+
+      /* round the edges to a circle with border radius 1/2 container size */
+      border-radius: 50%;
+    }
+  </style>
+{% endblock %}
+
+{% block avatar %}
+ <img style="display: inline-block" id="thumbnail" class="avatar img-responsive">
+ <strong style="margin:0px 0px 0px 2px; padding-top:20px">{{user.name}}</strong>
+{% endblock %}
+
+{%block menu%}
+  {% if user_level == 1 %}
+    <!--Standard User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+        </li>
+        <li>
+            <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Apply/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Apply/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+  <!--Evaluator User with badges-->
+  {% if user_level == 2 %}
+    <ul class="nav" id="side-menu">
+      <li>
+          <a href="/home"><i class="fa fa-home fa-fw"></i> Home</a>
+      </li>
+      <li>
+          <a href="/Apply"><i class="fa fa-pencil-square-o fa-fw"></i> Apply<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Apply/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Apply/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> My Applications<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Applications/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Applications/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Asignments"><i class="fa fa-file-text-o fa-fw"></i> Asignments <span style="background-color: #337ab7;" class="badge">{{pending.asignments}}</span><span class="fa arrow"> </span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Asignments/Courses">Courses  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_courses}}</span></a>
+              </li>
+              <li>
+                  <a href="/Asignments/Fellow">Fellow  <span style="background-color: #337ab7;" class="badge">{{pending.asigned_fellows}}</span></a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+          <a href="/Evaluations"><i class="fa fa-check-square-o fa-fw"></i> My Evaluations<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+              <li>
+                  <a href="/Evaluations/Courses">Courses</a>
+              </li>
+              <li>
+                  <a href="/Evaluations/Fellow">Fellow</a>
+              </li>
+          </ul>
+          <!-- /.nav-second-level -->
+      </li>
+      <li>
+        <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+      </li>
+  </ul>
+  {% endif %}
+
+  {% if user_level == 3 %}
+    <!--Admin User-->
+    <ul class="nav" id="side-menu">
+        <li>
+            <a href="/dashboard"><i class="fa fa-tachometer fa-fw"></i> Dashboard</a>
+        </li>
+        <li>
+          <a href="/Users"><i class="fa fa-user fa-fw"></i> Users<span class="fa arrow"></span></a>
+          <ul class="nav nav-second-level">
+            <li>
+              <a href="/Users">All</a>
+            </li>
+            <li>
+              <a href="/Evaluators">Evaluators</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+            <a href="/Applications"><i class="fa fa-briefcase fa-fw"></i> Aplications<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li>
+                    <a href="/Applications/Courses">Courses</a>
+                </li>
+                <li>
+                    <a href="/Applications/Fellow">Fellow</a>
+                </li>
+            </ul>
+            <!-- /.nav-second-level -->
+        </li>
+        <li>
+          <a href="{{url_for('logout')}}"> <i class="fa fa-sign-out fa-fw"></i>Log out</a>
+        </li>
+    </ul>
+  {% endif %}
+{%endblock%}
+
+{%block wrapper%}
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-lg-12">
+        <h1 class="page-header">Fellow</h1>
+      </div>
+      <!-- /.col-lg-12 -->
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+      <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Working Plan for Fellow Candidate</h3>
+        </div>
+        <div class="panel-body" style="padding:30px">
+          <div class="row">
+            <div class="col-lg-6">
+              <br>
+              <img id="innerlogo" src="{{url_for('static',filename='images/logo-alt2.png')}}" width="50%" style="margin: auto; display:block;" alt="" />
+              <br>
+              <h1 style="text-align:center">{{fellow.title}}</h1>
+              <h3 style="margin-top:35px">UNU/BIOLAC Priority Areas</h3>
+                <div class="checkbox">
+                  <label style="padding-bottom:10px">
+                    <input type="checkbox" disabled
+                    {% if fellow.priority == "1" %}
+                      checked
+                    {% endif %}
+                    > Emerging and neglected human, animal and plant diseases
+                  </label><br>
+                  <label style="padding-bottom:10px">
+                    <input type="checkbox" disabled
+                    {% if fellow.priority == 2 %}
+                    checked
+                    {% endif %}
+                    >
+                    Environmental microbiology: Metagenomics as a bioprospection tool for bioremediation
+                  </label>
+                  <label style="padding-bottom:10px">
+                    <input type="checkbox" disabled
+                    {% if fellow.priority == 3 %}
+                      checked
+                    {% endif %}
+                    >
+                    Renewable sources of energy (industrial biotechnology)
+                  </label>
+                </div>
+                  <br>
+            </div>
+            <div class="col-lg-6">
+              <table class="table table-striped">
+                <legend>General Information</legend>
+                <tbody>
+                  {% if user_level == 3 %}
+                  <tr>
+                    <td>Name</td>
+                    <td>{{fellow.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>Last Name</td>
+                    <td>{{fellow.lastName}}</td>
+                  </tr>
+                  {% endif %}
+                  <tr>
+                    <td>Title of the Fellow Working Plan</td>
+                    <td>{{fellow.title}}</td>
+                  </tr>
+                  <tr>
+                    <td>Citizenship</td>
+                    <td>{{fellow.citizenship}}</td>
+                  </tr>
+                  <tr>
+                    <td>Destination</td>
+                    <td>{{fellow.destination}}</td>
+                  </tr>
+                  <tr>
+                    <td>Institution</td>
+                    <td>{{fellow.institution}}</td>
+                  </tr>
+                  <tr>
+                    <td>Mentor</td>
+                    <td>{{fellow.mentor}}</td>
+                  </tr>
+                  <tr>
+                    <td>Mentor Mail</td>
+                    <td>{{fellow.mentor_email}}</td>
+                  </tr>
+                  <tr>
+                    <td>Host Institution</td>
+                    <td>{{fellow.hostInstitution}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{fellow.commDate}}</td>
+                    <td>{{fellow.termDate}}</td>
+                  </tr>
+                  <tr>
+                    <td>Term. Date</td>
+                    <td>{{fellow.termDate}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <legend>Detailed Information</legend>
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">General Objective</h4>
+                </div>
+                <div class="panel-body">
+                  <p>
+                    {{fellow.generalObjective}}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Specific Objectives</h4>
+                </div>
+                <div class="panel-body">
+                  <ol>
+                    {% for objective in fellow.objectives %}
+                    <li>
+                      {{objective.objective_item}}
+                    </li>
+                    {% endfor %}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Justification</h4>
+                </div>
+                <div class="panel-body">
+                <p>
+                {{fellow.justification}}
+                </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Activities</h4>
+                </div>
+                <div class="panel-body">
+                  <ol>
+                    {% for activity in fellow.activities %}
+                    <li>
+                      {{activity.activity_item}}
+                    </li>
+                    {% endfor %}
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Methodology</h4>
+                </div>
+                <div class="panel-body">
+                  <p>
+                  {{fellow.methodology}}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Working Plan</h4>
+                </div>
+                <div class="panel-body">
+                  <p>
+                  {{fellow.plan}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title" style="color: #a54399">Justification and Criteria</h4>
+                </div>
+                <div class="panel-body">
+                    {{fellow.criteria}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <legend>Annex</legend>
+            <div class="col-lg-4">
+              <strong>Acceptance Letter From Host Institution signed by Mentor</strong>
+              <a href="{{annex.acceptanceLetter}}">View</a>
+              <br>
+              <strong>Fellow CV</strong>
+              <a href="{{annex.fellowCV}}">View</a>
+              <br>
+              <strong>Mentor CV</strong>
+              <a href="{{annex.mentorCV}}">View</a>
+              <br>
+              <strong>Medical inform (FAF_Doc_8) Signed and stamped</strong>
+              <a href="{{annex.medicalInform}}">View</a>
+            </div>
+            <div class="col-lg-4">
+              <strong>Recommendation Letter from supervisor or mentor</strong>
+              <a href="{{annex.recommendationLetter}}">View</a>
+              <br>
+              <strong>Completed and signed applicant personal information form</strong>
+              <a href="{{annex.infoForm}}">View</a>
+              <br>
+              <strong>Fellow candidate photo o dices fellow</strong>
+              <a href="{{annex.photo}}">View</a>
+            </div>
+            <div class="col-lg-4">
+              <strong>Vendor Form from Host Institution</strong>
+              <a href="{{annex.vendorForm}}">View</a>
+              <br>
+              <strong>Signed and stamped by Host Institution the (FAF_Doc_6) in acceptance of conditions of grant by applicant
+              </strong>
+              <a href="{{annex.fafDoc6}}">View</a>
+              <br>
+              <strong>Conditions acceptance of grant by Director of the applicant`s institution (FAF_Doc_7) Signed and stamped
+              </strong>
+              <a href="{{annex.fafDoc7}}">View</a>
+            </div>
+
+            <div class="col-lg-12">
+              <br>
+              <div class="alert alert-danger">
+                <p><span><i class="fa fa-info-circle fa-fw"></i></span>
+                  *Please notice that, with no exception, all payments will be done through the Host Institution. Hence, all felllow candidates should discuss or sort
+                  this issue with their mentors and Host Institution before applying for the UNU-BIOLAC Fellowship Programme.
+                  <strong>
+                    The completed Vendor Form is mandatory for the Fellow application to be evaluated
+                  </strong>
+                </p>
+              </div>
+            </div>
+          </div>
+          {% if user_level == 3 or user_level == 2%}
+            {% for evaluation in fellow.evaluations%}
+              <div style="margin-top:15px"class="row">
+                <legend >Evaluation</legend>
+                  <div class="col-lg-6">
+                    <label>Previous Investigation Experience</label><br>
+                    <p>
+                      According to the available information in the applicant's CV, review the
+                      previous investigation on a scale from 1 to 5, being the latter the best choice.
+                    </p>
+                    Score: {{evaluation.previousInvestigationScore}}
+                    <br>
+                    <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                      {{evaluation.previousInvestigation}}
+                    </p>
+                  </div>
+                  <div class="col-lg-6">
+                    <label>Current Investigation Experience</label><br>
+                    <p>
+                      According to the available information in the applicant's CV and his/her working plan, review the
+                      current investigation on a scale from 1 to 5, being the latter the best choice.
+                    </p>
+                    Score: {{evaluation.currentInvestigationScore}}
+                    <br>
+                    <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                      {{evaluation.currentInvestigation}}
+                    </p>
+                  </div>
+                </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <label>Purpose of the Application</label><br>
+                  <p>
+                    Do you justify the purpose of the Application of this applicant and his/her project? review your consideration
+                     on a scale from 1 to 5, being the latter the best choice.
+                  </p>
+                  Score: {{evaluation.purposeApplicationScore}}
+                  <br>
+                  <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                    {{evaluation.purposeApplication}}
+                  </p>
+                </div>
+                <div class="col-lg-6">
+                  <label>Other Training Courses</label><br>
+                  <p>
+                    According to the available information en the applicant's CV, review the importance
+                    of training courses on a scale from 1 to 5, being the latter the best choice.
+                  </p>
+                  Score: {{evaluation.otherTrainingCoursesScore}}
+                  <br>
+                  <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                    {{evaluation.otherTrainingCourses}}
+                  </p>
+                </div>
+                <div class="col-lg-6">
+                  <label>Final Review</label><br>
+                  <p>
+                    Please justify briefly your evaluation score.
+                  </p>
+                  Score: {{evaluation.finalReviewScore}}
+                  <br>
+                  <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                    {{evaluation.finalReview}}
+                  </p>
+                </div>
+                <div class="col-lg-6">
+                  <br><br><br>
+                  <p style=""class="pull-right">
+                    Reviewed by : {{evaluation.evaluator_name}} {{evaluation.lastName}}
+                  </p>
+                </div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% if user_level == 3 %}
+          <div class="panel-footer">
+            <div class="row">
+              <div class="col-lg-12">
+                <span class="pull-right">
+                  <a style="margin-left:20px" href="{{url_for('asign_evaluator', token=fellow.token)}}" data-original-title="Edit this user" data-toggle="tooltip" type="button" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-edit"></i>
+                  <span>Asign Evaluator</span></a>
+                  <a data-toggle="modal" data-target="#approveModal" style="margin-left:20px" href="#" data-original-title="Approve this application" data-toggle="tooltip" type="button" class="btn btn-lg btn-success"><i class="fa fa-check"></i>
+                  <span>Approve</span></a>
+                  <a data-toggle="modal" data-target="#denyModal" style="margin-left:20px" href="#" data-original-title="Deny this application" data-toggle="tooltip" type="button" class="btn btn-lg btn-danger"><i class="glyphicon glyphicon-remove"></i>
+                  <span>Deny</span></a>
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div id="denyModal" class="modal fade" tabindex="-1" role="dialog">
+    <form action="" method="post">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Deny Confirmation</h4>
+          </div>
+          <div class="modal-body">
+            <p>This action will deny this application permanently. You will not be able to modify it again.</p>
+            <div style="display: none;" id="denyAlert" class="alert alert-danger alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> Application Denied. You can still review this application in the courses table.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="denyButton" type="button" value="deny" class="btn btn-danger">Deny</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </form>
+  </div><!-- /.modal -->
+  <div id="approveModal" class="modal fade" tabindex="-1" role="dialog">
+    <form action="" method="post">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Approve Confirmation</h4>
+          </div>
+          <div class="modal-body">
+            <p>This action will approve this application permanently. You will not be able to modify it again.</p>
+            <div style="display: none;" id="approveAlert" class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success!</strong> Application Approved. You can still review this application in the courses table.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id="approveButton" type="button" value="approve" class="btn btn-success">Approve</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </form>
+  </div><!-- /.modal -->
+</div>
+
+{% endblock %}
+
+{% block table_script %}
+  <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+  <script type="text/javascript">
+    var modalVerticalCenterClass = ".modal";
+    function centerModals($element) {
+        var $modals;
+        if ($element.length) {
+            $modals = $element;
+        } else {
+            $modals = $(modalVerticalCenterClass + ':visible');
+        }
+        $modals.each( function(i) {
+            var $clone = $(this).clone().css('display', 'block').appendTo('body');
+            var top = Math.round(($clone.height() - $clone.find('.modal-content').height()) / 2);
+            top = top > 0 ? top : 0;
+            $clone.remove();
+            $(this).find('.modal-content').css("margin-top", top);
+        });
+    }
+    $(modalVerticalCenterClass).on('show.bs.modal', function(e) {
+        centerModals($(this));
+    });
+    $(window).on('resize', centerModals);
+  </script>
+
+  <script type="text/javascript">
+
+  $('#denyButton').on('click', function() {
+    var $this = $(this);
+    $this.button('loading');
+
+    var uri="{{url_for('deny_fellow',fellow_id=fellow.id ) }}";
+
+    $.post(uri, 1, function(receive){
+        $("#info").append(receive);
+    });
+
+    $('#denyAlert').show();
+        setTimeout(function() {
+           $this.button('reset');
+            $('#denyModal').modal('toggle');
+             //Aqui va cualquier cosa que haga mientras tanto
+            window.location = "#";
+    }, 3000);
+  });
+  </script>
+
+  <script type="text/javascript">
+  $('#approveButton').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+  //Aqui va el ajax request
+  var uri="{{url_for('approve_fellow',fellow_id=fellow.id ) }}";
+
+  $.post(uri, 1, function(receive){
+      $("#info").append(receive);
+  });
+
+  $('#approveAlert').show();
+    setTimeout(function() {
+       $this.button('reset');
+         $('#approveModal').modal('toggle');
+         //Aqui va cualquier cosa que haga mientras tanto
+         window.location = "#";
+   }, 3000);
+  });
+  </script>
+
+{% endblock %}

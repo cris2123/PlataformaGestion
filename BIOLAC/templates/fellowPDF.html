@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fellow Application Form</title>
+  </head>
+  <body>
+    <h2>Working Plan for Fellow Candidate</h2>
+    <h1 style="text-align:center">{{fellow.title}}</h1>
+    <h3 style="margin-top:35px">UNU/BIOLAC Priority Areas</h3>
+    <label style="padding-bottom:10px">
+      <input type="checkbox"> Emerging and neglected human, animal and plant diseases
+    </label>
+    <br>
+    <label style="padding-bottom:10px">
+      <input type="checkbox">
+      Environmental microbiology: Metagenomics as a bioprospection tool for bioremediation
+    </label>
+    <br>
+    <label style="padding-bottom:10px">
+      <input type="checkbox">
+      Renewable sources of energy (industrial biotechnology)
+    </label>
+    <table class="table table-striped">
+      <legend>General Information</legend>
+      <tbody>
+        {% if user_level == 3 %}
+        <tr>
+          <td>Name</td>
+          <td>{{fellow.name}}</td>
+        </tr>
+        <tr>
+          <td>Last Name</td>
+          <td>{{fellow.lastName}}</td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td>Title of the Fellow Working Plan</td>
+          <td>{{fellow.title}}</td>
+        </tr>
+        <tr>
+          <td>Citizenship</td>
+          <td>{{fellow.citizenship}}</td>
+        </tr>
+        <tr>
+          <td>Destination</td>
+          <td>{{fellow.destination}}</td>
+        </tr>
+        <tr>
+          <td>Institution</td>
+          <td>{{fellow.institution}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <legend>Detailed Information</legend>
+    <h4 class="panel-title" style="color: #a54399">General Objective</h4>
+    <p>
+      {{fellow.generalObjective}}
+    </p>
+    <h4 class="panel-title" style="color: #a54399">Specific Objectives</h4>
+    <ol>
+      {% for objective in fellow.objectives %}
+      <li>
+        {{objective}}
+      </li>
+      {% endfor %}
+    </ol>
+    <h4 class="panel-title" style="color: #a54399">Justification</h4>
+    <p>
+    {{fellow.justification}}
+    </p>
+    <ol>
+      {% for activity in fellow.activities %}
+      <li>
+        {{activity}}
+      </li>
+      {% endfor %}
+    </ol>
+    <h4 class="panel-title" style="color: #a54399">Methodology</h4>
+    <p>
+    {{fellow.methodology}}
+    </p>
+    <h4 class="panel-title" style="color: #a54399">Working Plan</h4>
+    <p>
+    {{fellow.plan}}
+    </p>
+    <br>
+    {% if user_level == 3 or user_level == 2%}
+      {% for evaluation in fellow.evaluations%}
+        <div style="margin-top:15px"class=" ">
+          <legend >Evaluation</legend>
+            <div class=" ">
+              <label>Previous Investigation Experience</label><br>
+              <p>
+                According to the available information in the applicant's CV, review the
+                previous investigation on a scale from 1 to 5, being the latter the best choice.
+              </p>
+              Score: {{evaluation.previousInvestigationScore}}
+              <br>
+              <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                {{evaluation.previousInvestigation}}
+              </p>
+            </div>
+            <div class=" ">
+              <label>Current Investigation Experience</label><br>
+              <p>
+                According to the available information in the applicant's CV and his/her working plan, review the
+                current investigation on a scale from 1 to 5, being the latter the best choice.
+              </p>
+              Score: {{evaluation.currentInvestigationScore}}
+              <br>
+              <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+                {{evaluation.currentInvestigation}}
+              </p>
+            </div>
+          </div>
+        <div class=" ">
+          <div class=" ">
+            <label>Purpose of the Application</label><br>
+            <p>
+              Do you justify the purpose of the Application of this applicant and his/her project? review your consideration
+               on a scale from 1 to 5, being the latter the best choice.
+            </p>
+            Score: {{evaluation.purposeApplicationScore}}
+            <br>
+            <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+              {{evaluation.purposeApplication}}
+            </p>
+          </div>
+          <div class=" ">
+            <label>Other Training Courses</label><br>
+            <p>
+              According to the available information en the applicant's CV, review the importance
+              of training courses on a scale from 1 to 5, being the latter the best choice.
+            </p>
+            Score: {{evaluation.otherTrainingScore}}
+            <br>
+            <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+              {{evaluation.otherTraining}}
+            </p>
+          </div>
+          <div class=" ">
+            <label>Final Review</label><br>
+            <p>
+              Please justify briefly your evaluation score.
+            </p>
+            Score: {{evaluation.finalReviewScore}}
+            <br>
+            <p type='textarea', style="width:100%; max-width:100%;", class="alert alert-warning", placeholder="Write your comments here...", autofocus="">
+              {{evaluation.finalReview}}
+            </p>
+          </div>
+          <div class=" ">
+            <br><br><br>
+            <p style=""class="pull-right">
+              Reviewed by : {{evaluation.name}} {{evaluation.lastName}}
+            </p>
+
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </body>
+</html>

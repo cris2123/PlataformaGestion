@@ -1,0 +1,193 @@
+{% macro render_field(field, label_visible=true) -%}
+     <!-- <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}"> -->
+    {% if field.type != 'HiddenField' and label_visible %}
+        <!-- <label for="{{ field.id }}" class="control-label">{{ field.label }}</label> -->
+
+        {{ field(class_='form-control', **kwargs)|safe}}
+        {% if field.errors %}
+            {% for e in field.errors %}
+                <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{e}}</div>
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <!-- </div> -->
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+            <label style="color:grey;"> {{ label }} </label>
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_upload_field(field) %}
+
+
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> Sign up to UNU-BIOLAC </title>
+        <!-- <link rel="stylesheet prefetch" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> -->
+        <link type="text/css" rel="stylesheet prefetch" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+        <link type="text/css" rel="stylesheet" href="{{url_for('static',filename='css/style-signup.css')}}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <div class="section" style="background-color:white;">
+            <img src="{{url_for('static',filename='images/logo-alt2.png')}}" width="200px" class="logo"/>
+            <div class="contact-box">
+                    <p style="text-align: right"><a href="#">English</a></p>
+                    <p>+58 (212) 9621120</p>
+            </div>
+        </div>
+
+        <div class="wrapper">
+
+            <form class="form-signin" method="POST"  enctype="multipart/form-data" action="{{url_for('registro')}}" >
+             {{ form.csrf_token }}
+              <h2 class="form-signin-heading">Sign up to UNU-BIOLAC</h2>
+
+              <!--Login Information-->
+                <fieldset>
+                  <legend class="form-signin-sub">Login Information</legend>
+
+
+                  {{render_field(form.email, type="email", placeholder="Email Address*", required="required", autofocus="")}}
+                  <br>
+
+                {% with errors = get_flashed_messages(category_filter=["already"]) %}
+                      {% if errors %}
+
+                            {% for message in errors %}
+                            <div style="margin-top: 1.2rem;" class="alert alert-danger"> {{message}}</div>
+                            {% endfor %}
+
+                      {% endif %}
+                 {% endwith %}
+
+
+
+                  {{render_field(form.password,type="password",placeholder="Password*", required="required")}}
+                  <p style="color:grey;">Please confirm your password</p>
+
+                  {{render_field(form.re_password, placeholder="Re-type", required="required")}}
+
+                </fieldset>
+                <br>
+
+              <!--Profile Information-->
+
+
+              <fieldset style="margin-bottom: 20px;">
+
+                <legend class="form-signin-sub">Profile Information</legend>
+                {{render_field(form.name, type='text', placeholder="First Name", required='',autofocus="")}}
+
+
+                <br>
+                {{render_field(form.lastname,type='text', placeholder="Last Name", required='',autofocus="")}}
+
+
+                <label style="color:grey;  margin-top:20px;">{{form.birth_date.label}}</label>
+                {{render_field(form.birth_date, type='date', style='color:grey;')}}
+                <br>
+
+                {{render_field(form.citizenship, type='text', placeholder='Citizenship*', required="required",autofocus="", style='color:grey;')}}
+
+
+                <label style="color:grey; margin-top:20px;"> {{form.gender.label}}</label>
+                {{render_radio_field(form.gender)}}
+
+
+                {{render_field(form.marital_status, type='text', placeholder='Marital Status*', required="required",autofocus="")}}
+                <br>
+
+
+                <label style="color:grey; margin-top:20px;">{{form.profile_picture.label}} </label>
+                {{render_upload_field(form.profile_picture)}}
+
+              </fieldset>
+              <br>
+
+              <!--Contact Information-->
+
+              <fieldset>
+
+                <legend class="form-signin-sub">Contact Information</legend>
+
+                {{render_field(form.country, type='text', placeholder='Country*', required="required",autofocus="")}}
+                <br>
+                {{render_field(form.city, type='text', placeholder='City*', required="required",autofocus="")}}
+                <br>
+                {{render_field(form.zip_code, type='text', placeholder='ZIP Code*', required="required",autofocus="")}}
+                <br>
+                {{render_field(form.address, type='text', placeholder='Address*', required="required",autofocus="")}}
+                <br>
+                {{render_field(form.phonenumber, type='text', placeholder='Telephone Number*', required="required",autofocus="")}}
+                <br>
+                {{render_field(form.cellphone, type='text', placeholder='Mobile Number*', required="required",autofocus="")}}
+                <br>
+
+              </fieldset>
+                <br>
+
+              <!--Institution-->
+
+              <fieldset>
+                <legend class="form-signin-sub">Institution</legend>
+
+                {{render_field(form.institution, type='text', placeholder='Institution*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.faculty, type='text', placeholder='Faculty*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.section, type='text', placeholder='Specific section*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.mentor, type='text', placeholder='Mentor*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.mentor_mail, type='text', placeholder='Mentor Email*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+              </fieldset>
+              <br>
+
+              <!--Scientific Profile-->
+
+              <fieldset>
+                <legend class="form-signin-sub">Scientific Profile</legend>
+
+                {{render_field(form.max_academic_level, type='text', placeholder='Maximum Completed Academic level*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.current_academic_level, type='text', placeholder='"Current Study Level*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+                {{render_field(form.work_place, type='text', placeholder='Place of Work / Research*', required="required",autofocus="",style="max-width:400px;")}}
+                <br>
+
+              </fieldset>
+
+                <p style="color:grey;">
+                  All items are required, make sure to provide the correct information since it will be taken into account for your application evaluation.
+                </p>
+                <br>
+
+
+                <button  id="Submit" class="btn btn-lg btn-primary btn-block" type="submit" style="">Submit</button>
+
+            </form>
+
+          </div>
+
+      </body>
+  </html>
