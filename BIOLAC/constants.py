@@ -20,10 +20,10 @@ SUBJECT= "Confirmacion del correo para ingresar a la plataforma UNU-BIOLAC"
 SUBJECT_RESEND= "Reenvio del correo para ingreso al sistema de UNU-BIOLAC"
 SUBJECT_PASSWORD=" Recuperación de la contraseña de la plataforma UNU-BIOLAC"
 SUBJECT_INVITATION=" Solicitud para ser evaluador en la plataforma de Biolac"
-DUMMY_MAIL="cristhian2bravo@gmail.com"
+DUMMY_MAIL=""
 
 ## Variable para deployment
 # IP="domain name with ruta "
 #DUMMY_MAIL="correo para las pruebas aws"
 IP_DOMAIN="http://localhost:5000"
-#IP_DOMAIN="http://biolac.mxbuv8f3fz.us-east-1.elasticbeanstalk.com"
+
